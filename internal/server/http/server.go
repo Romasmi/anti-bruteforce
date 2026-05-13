@@ -41,7 +41,8 @@ func NewServer(logger Logger, grpcAddr string, host, port string) *Server {
 	mux := http.NewServeMux()
 	mux.Handle("/", gwmux)
 	mux.HandleFunc("GET /swagger/", s.serveSwaggerUI)
-	mux.HandleFunc("GET /proto/", s.serveProto)
+	mux.HandleFunc("GET /swagger.json", s.serveSwaggerJSON)
+	mux.HandleFunc("GET /proto", s.serveProto)
 
 	handler := loggingMiddleware(logger, mux)
 
@@ -57,6 +58,10 @@ func NewServer(logger Logger, grpcAddr string, host, port string) *Server {
 func (s *Server) serveSwaggerUI(w http.ResponseWriter, _ *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	fmt.Fprint(w, swaggerUIHTML)
+}
+
+func (s *Server) serveSwaggerJSON(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, filepath.Join("pkg", "api", "AntiBruteforce.swagger.json"))
 }
 
 func (s *Server) serveProto(w http.ResponseWriter, r *http.Request) {
