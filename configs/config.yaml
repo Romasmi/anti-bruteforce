@@ -1,0 +1,8 @@
+logger:
+  level: "${LOGGER_LEVEL}"
+http:
+  host: "${ANTI_BRUTEFORCE_HTTP_HOST}"
+  port: "${ANTI_BRUTEFORCE_HTTP_PORT}"
+grpc:
+  host: "${ANTI_BRUTEFORCE_GRPC_HOST}"
+  port: "${ANTI_BRUTEFORCE_GRPC_PORT}"

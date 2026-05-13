@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package event;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/Romasmi/anti-bruteforce/pkg/api;api";
+
+message HelloRequest {}
+
+message HelloResponse {
+    string message = 1;
+}
+
+message HealthcheckRequest {}
+
+message HealthcheckResponse {
+    string status = 1;
+}
+
+service AntiBruteforce {
+    rpc Hello(HelloRequest) returns (HelloResponse) {
+        option (google.api.http) = {
+            get: "/hello-world"
+        };
+    }
+
+    rpc Healthcheck(HealthcheckRequest) returns (HealthcheckResponse) {
+        option (google.api.http) = {
+            get: "/healthcheck"
+        };
+    }
+}
