@@ -7,19 +7,34 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-func validateIdentifier(t IdentifierType, value string) error {
-	if t == IdentifierTypeUnspecified {
-		return status.Error(codes.InvalidArgument, "type is required")
+func validateCheckAuth(login, password, ipStr string) error {
+	if login == "" {
+		return status.Error(codes.InvalidArgument, "login is required")
+	}
+	if password == "" {
+		return status.Error(codes.InvalidArgument, "password is required")
+	}
+	if ipStr == "" {
+		return status.Error(codes.InvalidArgument, "ip is required")
 	}
 
-	if value == "" {
-		return status.Error(codes.InvalidArgument, "value is required")
+	ip := net.ParseIP(ipStr)
+	if ip == nil || ip.To4() == nil {
+		return status.Error(codes.InvalidArgument, "ip must be a valid IPv4 address")
 	}
 
-	if t == IdentifierTypeIP {
-		ip := net.ParseIP(value)
+	return nil
+}
+
+func validateClearRate(login, ipStr string) error {
+	if login == "" && ipStr == "" {
+		return status.Error(codes.InvalidArgument, "login or ip is required")
+	}
+
+	if ipStr != "" {
+		ip := net.ParseIP(ipStr)
 		if ip == nil || ip.To4() == nil {
-			return status.Error(codes.InvalidArgument, "value must be a valid IPv4 address")
+			return status.Error(codes.InvalidArgument, "ip must be a valid IPv4 address")
 		}
 	}
 

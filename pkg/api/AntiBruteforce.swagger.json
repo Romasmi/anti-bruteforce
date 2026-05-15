@@ -129,10 +129,13 @@
     "eventCheckAuthRequest": {
       "type": "object",
       "properties": {
-        "type": {
-          "$ref": "#/definitions/eventIdentifierType"
+        "login": {
+          "type": "string"
         },
-        "value": {
+        "password": {
+          "type": "string"
+        },
+        "ip": {
           "type": "string"
         }
       }
@@ -148,10 +151,10 @@
     "eventClearRateRequest": {
       "type": "object",
       "properties": {
-        "type": {
-          "$ref": "#/definitions/eventIdentifierType"
+        "login": {
+          "type": "string"
         },
-        "value": {
+        "ip": {
           "type": "string"
         }
       }
@@ -174,16 +177,6 @@
           "type": "string"
         }
       }
-    },
-    "eventIdentifierType": {
-      "type": "string",
-      "enum": [
-        "IDENTIFIER_TYPE_UNSPECIFIED",
-        "IDENTIFIER_TYPE_LOGIN",
-        "IDENTIFIER_TYPE_PASSWORD",
-        "IDENTIFIER_TYPE_IP"
-      ],
-      "default": "IDENTIFIER_TYPE_UNSPECIFIED"
     },
     "protobufAny": {
       "type": "object",

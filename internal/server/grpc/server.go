@@ -59,8 +59,9 @@ func (s *Server) Healthcheck(ctx context.Context, req *api.HealthcheckRequest) (
 
 func (s *Server) CheckAuth(ctx context.Context, req *api.CheckAuthRequest) (*api.CheckAuthResponse, error) {
 	input := &usecases.CheckAuthInput{
-		Type:  usecases.IdentifierType(req.Type),
-		Value: req.Value,
+		Login:    req.Login,
+		Password: req.Password,
+		IP:       req.Ip,
 	}
 	res, err := s.usecases[usecases.CheckAuth].Do(ctx, input)
 	if err != nil {
@@ -71,8 +72,8 @@ func (s *Server) CheckAuth(ctx context.Context, req *api.CheckAuthRequest) (*api
 
 func (s *Server) ClearRate(ctx context.Context, req *api.ClearRateRequest) (*api.ClearRateResponse, error) {
 	input := &usecases.ClearRateInput{
-		Type:  usecases.IdentifierType(req.Type),
-		Value: req.Value,
+		Login: req.Login,
+		IP:    req.Ip,
 	}
 	_, err := s.usecases[usecases.ClearRate].Do(ctx, input)
 	if err != nil {

@@ -1,7 +1,6 @@
 package usecases_test
 
 import (
-	"context"
 	"testing"
 
 	"github.com/Romasmi/anti-bruteforce/internal/usecases"
@@ -12,28 +11,25 @@ import (
 
 func TestClearRateUsecase(t *testing.T) {
 	uc := &usecases.ClearRateUsecase{}
-	ctx := context.Background()
+	ctx := t.Context()
 
 	t.Run("valid login", func(t *testing.T) {
-		_, err := uc.Do(ctx, &usecases.ClearRateInput{Type: usecases.IdentifierTypeLogin, Value: "user123"})
+		_, err := uc.Do(ctx, &usecases.ClearRateInput{Login: "user123"})
 		require.NoError(t, err)
 	})
 
 	t.Run("valid ip", func(t *testing.T) {
-		_, err := uc.Do(ctx, &usecases.ClearRateInput{Type: usecases.IdentifierTypeIP, Value: "10.0.0.1"})
+		_, err := uc.Do(ctx, &usecases.ClearRateInput{IP: "10.0.0.1"})
 		require.NoError(t, err)
 	})
 
-	t.Run("unspecified type", func(t *testing.T) {
-		_, err := uc.Do(ctx, &usecases.ClearRateInput{Type: usecases.IdentifierTypeUnspecified, Value: "user123"})
-		require.Error(t, err)
-		st, ok := status.FromError(err)
-		require.True(t, ok)
-		require.Equal(t, codes.InvalidArgument, st.Code())
+	t.Run("valid both", func(t *testing.T) {
+		_, err := uc.Do(ctx, &usecases.ClearRateInput{Login: "user123", IP: "10.0.0.1"})
+		require.NoError(t, err)
 	})
 
-	t.Run("empty value", func(t *testing.T) {
-		_, err := uc.Do(ctx, &usecases.ClearRateInput{Type: usecases.IdentifierTypeLogin, Value: ""})
+	t.Run("empty both", func(t *testing.T) {
+		_, err := uc.Do(ctx, &usecases.ClearRateInput{Login: "", IP: ""})
 		require.Error(t, err)
 		st, ok := status.FromError(err)
 		require.True(t, ok)
@@ -41,7 +37,7 @@ func TestClearRateUsecase(t *testing.T) {
 	})
 
 	t.Run("invalid ip format", func(t *testing.T) {
-		_, err := uc.Do(ctx, &usecases.ClearRateInput{Type: usecases.IdentifierTypeIP, Value: "999.999.999.999"})
+		_, err := uc.Do(ctx, &usecases.ClearRateInput{IP: "999.999.999.999"})
 		require.Error(t, err)
 		st, ok := status.FromError(err)
 		require.True(t, ok)
@@ -49,7 +45,7 @@ func TestClearRateUsecase(t *testing.T) {
 	})
 
 	t.Run("ipv6 rejected", func(t *testing.T) {
-		_, err := uc.Do(ctx, &usecases.ClearRateInput{Type: usecases.IdentifierTypeIP, Value: "::1"})
+		_, err := uc.Do(ctx, &usecases.ClearRateInput{IP: "::1"})
 		require.Error(t, err)
 		st, ok := status.FromError(err)
 		require.True(t, ok)

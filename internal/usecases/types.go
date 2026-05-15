@@ -9,29 +9,21 @@ const (
 	ClearRate
 )
 
-type IdentifierType int32
-
-const (
-	IdentifierTypeUnspecified IdentifierType = 0
-	IdentifierTypeLogin       IdentifierType = 1
-	IdentifierTypePassword    IdentifierType = 2
-	IdentifierTypeIP          IdentifierType = 3
-)
-
 type CheckAuthInput struct {
-	Type  IdentifierType
-	Value string
+	Login    string
+	Password string
+	IP       string
 }
 
 func (r *CheckAuthInput) validate() error {
-	return validateIdentifier(r.Type, r.Value)
+	return validateCheckAuth(r.Login, r.Password, r.IP)
 }
 
 type ClearRateInput struct {
-	Type  IdentifierType
-	Value string
+	Login string
+	IP    string
 }
 
 func (r *ClearRateInput) validate() error {
-	return validateIdentifier(r.Type, r.Value)
+	return validateClearRate(r.Login, r.IP)
 }

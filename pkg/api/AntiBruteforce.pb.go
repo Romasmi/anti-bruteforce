@@ -22,58 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type IdentifierType int32
-
-const (
-	IdentifierType_IDENTIFIER_TYPE_UNSPECIFIED IdentifierType = 0
-	IdentifierType_IDENTIFIER_TYPE_LOGIN       IdentifierType = 1
-	IdentifierType_IDENTIFIER_TYPE_PASSWORD    IdentifierType = 2
-	IdentifierType_IDENTIFIER_TYPE_IP          IdentifierType = 3
-)
-
-// Enum value maps for IdentifierType.
-var (
-	IdentifierType_name = map[int32]string{
-		0: "IDENTIFIER_TYPE_UNSPECIFIED",
-		1: "IDENTIFIER_TYPE_LOGIN",
-		2: "IDENTIFIER_TYPE_PASSWORD",
-		3: "IDENTIFIER_TYPE_IP",
-	}
-	IdentifierType_value = map[string]int32{
-		"IDENTIFIER_TYPE_UNSPECIFIED": 0,
-		"IDENTIFIER_TYPE_LOGIN":       1,
-		"IDENTIFIER_TYPE_PASSWORD":    2,
-		"IDENTIFIER_TYPE_IP":          3,
-	}
-)
-
-func (x IdentifierType) Enum() *IdentifierType {
-	p := new(IdentifierType)
-	*p = x
-	return p
-}
-
-func (x IdentifierType) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (IdentifierType) Descriptor() protoreflect.EnumDescriptor {
-	return file_AntiBruteforce_proto_enumTypes[0].Descriptor()
-}
-
-func (IdentifierType) Type() protoreflect.EnumType {
-	return &file_AntiBruteforce_proto_enumTypes[0]
-}
-
-func (x IdentifierType) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use IdentifierType.Descriptor instead.
-func (IdentifierType) EnumDescriptor() ([]byte, []int) {
-	return file_AntiBruteforce_proto_rawDescGZIP(), []int{0}
-}
-
 type HelloRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -236,8 +184,9 @@ func (x *HealthcheckResponse) GetStatus() string {
 
 type CheckAuthRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Type          IdentifierType         `protobuf:"varint,1,opt,name=type,proto3,enum=event.IdentifierType" json:"type,omitempty"`
-	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Login         string                 `protobuf:"bytes,1,opt,name=login,proto3" json:"login,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	Ip            string                 `protobuf:"bytes,3,opt,name=ip,proto3" json:"ip,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -272,16 +221,23 @@ func (*CheckAuthRequest) Descriptor() ([]byte, []int) {
 	return file_AntiBruteforce_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *CheckAuthRequest) GetType() IdentifierType {
+func (x *CheckAuthRequest) GetLogin() string {
 	if x != nil {
-		return x.Type
+		return x.Login
 	}
-	return IdentifierType_IDENTIFIER_TYPE_UNSPECIFIED
+	return ""
 }
 
-func (x *CheckAuthRequest) GetValue() string {
+func (x *CheckAuthRequest) GetPassword() string {
 	if x != nil {
-		return x.Value
+		return x.Password
+	}
+	return ""
+}
+
+func (x *CheckAuthRequest) GetIp() string {
+	if x != nil {
+		return x.Ip
 	}
 	return ""
 }
@@ -332,8 +288,8 @@ func (x *CheckAuthResponse) GetOk() bool {
 
 type ClearRateRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Type          IdentifierType         `protobuf:"varint,1,opt,name=type,proto3,enum=event.IdentifierType" json:"type,omitempty"`
-	Value         string                 `protobuf:"bytes,2,opt,name=value,proto3" json:"value,omitempty"`
+	Login         string                 `protobuf:"bytes,1,opt,name=login,proto3" json:"login,omitempty"`
+	Ip            string                 `protobuf:"bytes,2,opt,name=ip,proto3" json:"ip,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -368,16 +324,16 @@ func (*ClearRateRequest) Descriptor() ([]byte, []int) {
 	return file_AntiBruteforce_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *ClearRateRequest) GetType() IdentifierType {
+func (x *ClearRateRequest) GetLogin() string {
 	if x != nil {
-		return x.Type
+		return x.Login
 	}
-	return IdentifierType_IDENTIFIER_TYPE_UNSPECIFIED
+	return ""
 }
 
-func (x *ClearRateRequest) GetValue() string {
+func (x *ClearRateRequest) GetIp() string {
 	if x != nil {
-		return x.Value
+		return x.Ip
 	}
 	return ""
 }
@@ -428,21 +384,17 @@ const file_AntiBruteforce_proto_rawDesc = "" +
 	"\amessage\x18\x01 \x01(\tR\amessage\"\x14\n" +
 	"\x12HealthcheckRequest\"-\n" +
 	"\x13HealthcheckResponse\x12\x16\n" +
-	"\x06status\x18\x01 \x01(\tR\x06status\"S\n" +
-	"\x10CheckAuthRequest\x12)\n" +
-	"\x04type\x18\x01 \x01(\x0e2\x15.event.IdentifierTypeR\x04type\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value\"#\n" +
+	"\x06status\x18\x01 \x01(\tR\x06status\"T\n" +
+	"\x10CheckAuthRequest\x12\x14\n" +
+	"\x05login\x18\x01 \x01(\tR\x05login\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\x12\x0e\n" +
+	"\x02ip\x18\x03 \x01(\tR\x02ip\"#\n" +
 	"\x11CheckAuthResponse\x12\x0e\n" +
-	"\x02ok\x18\x01 \x01(\bR\x02ok\"S\n" +
-	"\x10ClearRateRequest\x12)\n" +
-	"\x04type\x18\x01 \x01(\x0e2\x15.event.IdentifierTypeR\x04type\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value\"\x13\n" +
-	"\x11ClearRateResponse*\x82\x01\n" +
-	"\x0eIdentifierType\x12\x1f\n" +
-	"\x1bIDENTIFIER_TYPE_UNSPECIFIED\x10\x00\x12\x19\n" +
-	"\x15IDENTIFIER_TYPE_LOGIN\x10\x01\x12\x1c\n" +
-	"\x18IDENTIFIER_TYPE_PASSWORD\x10\x02\x12\x16\n" +
-	"\x12IDENTIFIER_TYPE_IP\x10\x032\xe6\x02\n" +
+	"\x02ok\x18\x01 \x01(\bR\x02ok\"8\n" +
+	"\x10ClearRateRequest\x12\x14\n" +
+	"\x05login\x18\x01 \x01(\tR\x05login\x12\x0e\n" +
+	"\x02ip\x18\x02 \x01(\tR\x02ip\"\x13\n" +
+	"\x11ClearRateResponse2\xe6\x02\n" +
 	"\x0eAntiBruteforce\x12H\n" +
 	"\x05Hello\x12\x13.event.HelloRequest\x1a\x14.event.HelloResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/hello-world\x12Z\n" +
 	"\vHealthcheck\x12\x19.event.HealthcheckRequest\x1a\x1a.event.HealthcheckResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/healthcheck\x12V\n" +
@@ -461,35 +413,31 @@ func file_AntiBruteforce_proto_rawDescGZIP() []byte {
 	return file_AntiBruteforce_proto_rawDescData
 }
 
-var file_AntiBruteforce_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_AntiBruteforce_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_AntiBruteforce_proto_goTypes = []any{
-	(IdentifierType)(0),         // 0: event.IdentifierType
-	(*HelloRequest)(nil),        // 1: event.HelloRequest
-	(*HelloResponse)(nil),       // 2: event.HelloResponse
-	(*HealthcheckRequest)(nil),  // 3: event.HealthcheckRequest
-	(*HealthcheckResponse)(nil), // 4: event.HealthcheckResponse
-	(*CheckAuthRequest)(nil),    // 5: event.CheckAuthRequest
-	(*CheckAuthResponse)(nil),   // 6: event.CheckAuthResponse
-	(*ClearRateRequest)(nil),    // 7: event.ClearRateRequest
-	(*ClearRateResponse)(nil),   // 8: event.ClearRateResponse
+	(*HelloRequest)(nil),        // 0: event.HelloRequest
+	(*HelloResponse)(nil),       // 1: event.HelloResponse
+	(*HealthcheckRequest)(nil),  // 2: event.HealthcheckRequest
+	(*HealthcheckResponse)(nil), // 3: event.HealthcheckResponse
+	(*CheckAuthRequest)(nil),    // 4: event.CheckAuthRequest
+	(*CheckAuthResponse)(nil),   // 5: event.CheckAuthResponse
+	(*ClearRateRequest)(nil),    // 6: event.ClearRateRequest
+	(*ClearRateResponse)(nil),   // 7: event.ClearRateResponse
 }
 var file_AntiBruteforce_proto_depIdxs = []int32{
-	0, // 0: event.CheckAuthRequest.type:type_name -> event.IdentifierType
-	0, // 1: event.ClearRateRequest.type:type_name -> event.IdentifierType
-	1, // 2: event.AntiBruteforce.Hello:input_type -> event.HelloRequest
-	3, // 3: event.AntiBruteforce.Healthcheck:input_type -> event.HealthcheckRequest
-	5, // 4: event.AntiBruteforce.CheckAuth:input_type -> event.CheckAuthRequest
-	7, // 5: event.AntiBruteforce.ClearRate:input_type -> event.ClearRateRequest
-	2, // 6: event.AntiBruteforce.Hello:output_type -> event.HelloResponse
-	4, // 7: event.AntiBruteforce.Healthcheck:output_type -> event.HealthcheckResponse
-	6, // 8: event.AntiBruteforce.CheckAuth:output_type -> event.CheckAuthResponse
-	8, // 9: event.AntiBruteforce.ClearRate:output_type -> event.ClearRateResponse
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0, // 0: event.AntiBruteforce.Hello:input_type -> event.HelloRequest
+	2, // 1: event.AntiBruteforce.Healthcheck:input_type -> event.HealthcheckRequest
+	4, // 2: event.AntiBruteforce.CheckAuth:input_type -> event.CheckAuthRequest
+	6, // 3: event.AntiBruteforce.ClearRate:input_type -> event.ClearRateRequest
+	1, // 4: event.AntiBruteforce.Hello:output_type -> event.HelloResponse
+	3, // 5: event.AntiBruteforce.Healthcheck:output_type -> event.HealthcheckResponse
+	5, // 6: event.AntiBruteforce.CheckAuth:output_type -> event.CheckAuthResponse
+	7, // 7: event.AntiBruteforce.ClearRate:output_type -> event.ClearRateResponse
+	4, // [4:8] is the sub-list for method output_type
+	0, // [0:4] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_AntiBruteforce_proto_init() }
@@ -502,14 +450,13 @@ func file_AntiBruteforce_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_AntiBruteforce_proto_rawDesc), len(file_AntiBruteforce_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_AntiBruteforce_proto_goTypes,
 		DependencyIndexes: file_AntiBruteforce_proto_depIdxs,
-		EnumInfos:         file_AntiBruteforce_proto_enumTypes,
 		MessageInfos:      file_AntiBruteforce_proto_msgTypes,
 	}.Build()
 	File_AntiBruteforce_proto = out.File

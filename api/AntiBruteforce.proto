@@ -18,16 +18,10 @@ message HealthcheckResponse {
     string status = 1;
 }
 
-enum IdentifierType {
-    IDENTIFIER_TYPE_UNSPECIFIED = 0;
-    IDENTIFIER_TYPE_LOGIN = 1;
-    IDENTIFIER_TYPE_PASSWORD = 2;
-    IDENTIFIER_TYPE_IP = 3;
-}
-
 message CheckAuthRequest {
-    IdentifierType type = 1;
-    string value = 2;
+    string login = 1;
+    string password = 2;
+    string ip = 3;
 }
 
 message CheckAuthResponse {
@@ -35,8 +29,8 @@ message CheckAuthResponse {
 }
 
 message ClearRateRequest {
-    IdentifierType type = 1;
-    string value = 2;
+    string login = 1;
+    string ip = 2;
 }
 
 message ClearRateResponse {}
