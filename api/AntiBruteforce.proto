@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package event;
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/Romasmi/anti-bruteforce/pkg/api;api";
+
+message HelloRequest {}
+
+message HelloResponse {
+    string message = 1;
+}
+
+message HealthcheckRequest {}
+
+message HealthcheckResponse {
+    string status = 1;
+}
+
+message CheckAuthRequest {
+    string login = 1;
+    string password = 2;
+    string ip = 3;
+}
+
+message CheckAuthResponse {
+    bool ok = 1;
+}
+
+message ClearRateRequest {
+    string login = 1;
+    string ip = 2;
+}
+
+message ClearRateResponse {}
+
+service AntiBruteforce {
+    rpc Hello(HelloRequest) returns (HelloResponse) {
+        option (google.api.http) = {
+            get: "/hello-world"
+        };
+    }
+
+    rpc Healthcheck(HealthcheckRequest) returns (HealthcheckResponse) {
+        option (google.api.http) = {
+            get: "/healthcheck"
+        };
+    }
+
+    rpc CheckAuth(CheckAuthRequest) returns (CheckAuthResponse) {
+        option (google.api.http) = {
+            post: "/auth/check"
+            body: "*"
+        };
+    }
+
+    rpc ClearRate(ClearRateRequest) returns (ClearRateResponse) {
+        option (google.api.http) = {
+            post: "/clear-rate"
+            body: "*"
+        };
+    }
+}
