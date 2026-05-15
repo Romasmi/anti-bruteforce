@@ -41,10 +41,7 @@ version: build
 	$(BIN) version
 
 test:
-	go test -race ./internal/...
-
-api-test:
-	go test -v ./internal/server/http/...
+	go test -v -race ./internal/...
 
 lint:
 	go mod download
@@ -76,4 +73,4 @@ clean:
 	rm -rf bin/
 	go clean -cache -testcache
 
-.PHONY: build run run-api run-all build-img run-img version test api-test lint migration generate load-tests up down integration-tests clean
+.PHONY: build run run-api run-all build-img run-img version test api-test unit-test lint migration generate load-tests up down integration-tests clean

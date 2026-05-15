@@ -18,6 +18,29 @@ message HealthcheckResponse {
     string status = 1;
 }
 
+enum IdentifierType {
+    IDENTIFIER_TYPE_UNSPECIFIED = 0;
+    IDENTIFIER_TYPE_LOGIN = 1;
+    IDENTIFIER_TYPE_PASSWORD = 2;
+    IDENTIFIER_TYPE_IP = 3;
+}
+
+message CheckAuthRequest {
+    IdentifierType type = 1;
+    string value = 2;
+}
+
+message CheckAuthResponse {
+    bool ok = 1;
+}
+
+message ClearRateRequest {
+    IdentifierType type = 1;
+    string value = 2;
+}
+
+message ClearRateResponse {}
+
 service AntiBruteforce {
     rpc Hello(HelloRequest) returns (HelloResponse) {
         option (google.api.http) = {
@@ -28,6 +51,20 @@ service AntiBruteforce {
     rpc Healthcheck(HealthcheckRequest) returns (HealthcheckResponse) {
         option (google.api.http) = {
             get: "/healthcheck"
+        };
+    }
+
+    rpc CheckAuth(CheckAuthRequest) returns (CheckAuthResponse) {
+        option (google.api.http) = {
+            post: "/auth/check"
+            body: "*"
+        };
+    }
+
+    rpc ClearRate(ClearRateRequest) returns (ClearRateResponse) {
+        option (google.api.http) = {
+            post: "/clear-rate"
+            body: "*"
         };
     }
 }

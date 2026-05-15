@@ -21,6 +21,8 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	AntiBruteforce_Hello_FullMethodName       = "/event.AntiBruteforce/Hello"
 	AntiBruteforce_Healthcheck_FullMethodName = "/event.AntiBruteforce/Healthcheck"
+	AntiBruteforce_CheckAuth_FullMethodName   = "/event.AntiBruteforce/CheckAuth"
+	AntiBruteforce_ClearRate_FullMethodName   = "/event.AntiBruteforce/ClearRate"
 )
 
 // AntiBruteforceClient is the client API for AntiBruteforce service.
@@ -29,6 +31,8 @@ const (
 type AntiBruteforceClient interface {
 	Hello(ctx context.Context, in *HelloRequest, opts ...grpc.CallOption) (*HelloResponse, error)
 	Healthcheck(ctx context.Context, in *HealthcheckRequest, opts ...grpc.CallOption) (*HealthcheckResponse, error)
+	CheckAuth(ctx context.Context, in *CheckAuthRequest, opts ...grpc.CallOption) (*CheckAuthResponse, error)
+	ClearRate(ctx context.Context, in *ClearRateRequest, opts ...grpc.CallOption) (*ClearRateResponse, error)
 }
 
 type antiBruteforceClient struct {
@@ -59,12 +63,34 @@ func (c *antiBruteforceClient) Healthcheck(ctx context.Context, in *HealthcheckR
 	return out, nil
 }
 
+func (c *antiBruteforceClient) CheckAuth(ctx context.Context, in *CheckAuthRequest, opts ...grpc.CallOption) (*CheckAuthResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CheckAuthResponse)
+	err := c.cc.Invoke(ctx, AntiBruteforce_CheckAuth_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *antiBruteforceClient) ClearRate(ctx context.Context, in *ClearRateRequest, opts ...grpc.CallOption) (*ClearRateResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ClearRateResponse)
+	err := c.cc.Invoke(ctx, AntiBruteforce_ClearRate_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AntiBruteforceServer is the server API for AntiBruteforce service.
 // All implementations must embed UnimplementedAntiBruteforceServer
 // for forward compatibility.
 type AntiBruteforceServer interface {
 	Hello(context.Context, *HelloRequest) (*HelloResponse, error)
 	Healthcheck(context.Context, *HealthcheckRequest) (*HealthcheckResponse, error)
+	CheckAuth(context.Context, *CheckAuthRequest) (*CheckAuthResponse, error)
+	ClearRate(context.Context, *ClearRateRequest) (*ClearRateResponse, error)
 	mustEmbedUnimplementedAntiBruteforceServer()
 }
 
@@ -80,6 +106,12 @@ func (UnimplementedAntiBruteforceServer) Hello(context.Context, *HelloRequest) (
 }
 func (UnimplementedAntiBruteforceServer) Healthcheck(context.Context, *HealthcheckRequest) (*HealthcheckResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Healthcheck not implemented")
+}
+func (UnimplementedAntiBruteforceServer) CheckAuth(context.Context, *CheckAuthRequest) (*CheckAuthResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method CheckAuth not implemented")
+}
+func (UnimplementedAntiBruteforceServer) ClearRate(context.Context, *ClearRateRequest) (*ClearRateResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ClearRate not implemented")
 }
 func (UnimplementedAntiBruteforceServer) mustEmbedUnimplementedAntiBruteforceServer() {}
 func (UnimplementedAntiBruteforceServer) testEmbeddedByValue()                        {}
@@ -138,6 +170,42 @@ func _AntiBruteforce_Healthcheck_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AntiBruteforce_CheckAuth_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CheckAuthRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AntiBruteforceServer).CheckAuth(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AntiBruteforce_CheckAuth_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AntiBruteforceServer).CheckAuth(ctx, req.(*CheckAuthRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AntiBruteforce_ClearRate_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClearRateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AntiBruteforceServer).ClearRate(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AntiBruteforce_ClearRate_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AntiBruteforceServer).ClearRate(ctx, req.(*ClearRateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AntiBruteforce_ServiceDesc is the grpc.ServiceDesc for AntiBruteforce service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -152,6 +220,14 @@ var AntiBruteforce_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Healthcheck",
 			Handler:    _AntiBruteforce_Healthcheck_Handler,
+		},
+		{
+			MethodName: "CheckAuth",
+			Handler:    _AntiBruteforce_CheckAuth_Handler,
+		},
+		{
+			MethodName: "ClearRate",
+			Handler:    _AntiBruteforce_ClearRate_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

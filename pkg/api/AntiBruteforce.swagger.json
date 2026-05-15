@@ -16,6 +16,70 @@
     "application/json"
   ],
   "paths": {
+    "/auth/check": {
+      "post": {
+        "operationId": "AntiBruteforce_CheckAuth",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventCheckAuthResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/eventCheckAuthRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AntiBruteforce"
+        ]
+      }
+    },
+    "/clear-rate": {
+      "post": {
+        "operationId": "AntiBruteforce_ClearRate",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventClearRateResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/eventClearRateRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AntiBruteforce"
+        ]
+      }
+    },
     "/healthcheck": {
       "get": {
         "operationId": "AntiBruteforce_Healthcheck",
@@ -62,6 +126,39 @@
     }
   },
   "definitions": {
+    "eventCheckAuthRequest": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/eventIdentifierType"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "eventCheckAuthResponse": {
+      "type": "object",
+      "properties": {
+        "ok": {
+          "type": "boolean"
+        }
+      }
+    },
+    "eventClearRateRequest": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/eventIdentifierType"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    },
+    "eventClearRateResponse": {
+      "type": "object"
+    },
     "eventHealthcheckResponse": {
       "type": "object",
       "properties": {
@@ -77,6 +174,16 @@
           "type": "string"
         }
       }
+    },
+    "eventIdentifierType": {
+      "type": "string",
+      "enum": [
+        "IDENTIFIER_TYPE_UNSPECIFIED",
+        "IDENTIFIER_TYPE_LOGIN",
+        "IDENTIFIER_TYPE_PASSWORD",
+        "IDENTIFIER_TYPE_IP"
+      ],
+      "default": "IDENTIFIER_TYPE_UNSPECIFIED"
     },
     "protobufAny": {
       "type": "object",

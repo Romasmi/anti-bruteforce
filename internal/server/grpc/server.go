@@ -57,6 +57,30 @@ func (s *Server) Healthcheck(ctx context.Context, req *api.HealthcheckRequest) (
 	return &api.HealthcheckResponse{Status: res.(string)}, nil
 }
 
+func (s *Server) CheckAuth(ctx context.Context, req *api.CheckAuthRequest) (*api.CheckAuthResponse, error) {
+	input := &usecases.CheckAuthInput{
+		Type:  usecases.IdentifierType(req.Type),
+		Value: req.Value,
+	}
+	res, err := s.usecases[usecases.CheckAuth].Do(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	return &api.CheckAuthResponse{Ok: res.(bool)}, nil
+}
+
+func (s *Server) ClearRate(ctx context.Context, req *api.ClearRateRequest) (*api.ClearRateResponse, error) {
+	input := &usecases.ClearRateInput{
+		Type:  usecases.IdentifierType(req.Type),
+		Value: req.Value,
+	}
+	_, err := s.usecases[usecases.ClearRate].Do(ctx, input)
+	if err != nil {
+		return nil, err
+	}
+	return &api.ClearRateResponse{}, nil
+}
+
 func (s *Server) loggingInterceptor(
 	ctx context.Context,
 	req any,
