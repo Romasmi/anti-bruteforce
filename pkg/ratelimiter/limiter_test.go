@@ -110,17 +110,17 @@ func TestRateLimiter_UnknownStrategy(t *testing.T) {
 
 func newLimiter() *RateLimiter {
 	return NewRateLimiter(AlgorithmMap{
-		StrategyLogin: leackybucket.NewLeakyBucket(leackybucket.LeakyBucketConfig{
+		StrategyLogin: leackybucket.NewLeakyBucket(leackybucket.LeakyBucketParams{
 			Capacity: 1,
 			LeakRate: 1.0 / 60.0,
 			TTL:      time.Minute,
 		}),
-		StrategyPassword: leackybucket.NewLeakyBucket(leackybucket.LeakyBucketConfig{
+		StrategyPassword: leackybucket.NewLeakyBucket(leackybucket.LeakyBucketParams{
 			Capacity: 100,
 			LeakRate: 100.0 / 60.0,
 			TTL:      time.Minute,
 		}),
-		StrategyIP: leackybucket.NewLeakyBucket(leackybucket.LeakyBucketConfig{
+		StrategyIP: leackybucket.NewLeakyBucket(leackybucket.LeakyBucketParams{
 			Capacity: 1000,
 			LeakRate: 1000.0 / 60.0,
 			TTL:      2 * time.Minute,

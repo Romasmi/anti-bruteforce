@@ -10,25 +10,30 @@ type bucket struct {
 	lastUpdated time.Time
 }
 
-type LeakyBucketConfig struct {
+type LeakyBucketParams struct {
 	Capacity float64
 	LeakRate float64       // tokens per second; typically Capacity / WindowSeconds
 	TTL      time.Duration // how long before an idle bucket is evicted
+	// Repo is optional. When non-nil, white/black list checks are applied before bucket logic.
+	// Use NewMemoryRepository for an in-memory default.
+	Repo Repository
 }
 
 type LeakyBucket struct {
 	capacity float64
 	leakRate float64
 	ttl      time.Duration
+	repo     Repository
 	mu       sync.Mutex
 	buckets  map[string]*bucket
 }
 
-func NewLeakyBucket(config LeakyBucketConfig) *LeakyBucket {
+func NewLeakyBucket(params LeakyBucketParams) *LeakyBucket {
 	lb := &LeakyBucket{
-		capacity: config.Capacity,
-		leakRate: config.LeakRate,
-		ttl:      config.TTL,
+		capacity: params.Capacity,
+		leakRate: params.LeakRate,
+		ttl:      params.TTL,
+		repo:     params.Repo,
 		buckets:  make(map[string]*bucket),
 	}
 	go lb.evict()
@@ -36,6 +41,15 @@ func NewLeakyBucket(config LeakyBucketConfig) *LeakyBucket {
 }
 
 func (lb *LeakyBucket) Allow(key string) bool {
+	if lb.repo != nil {
+		if lb.repo.ExistsInWhiteList(key) {
+			return true
+		}
+		if lb.repo.ExistsInBlackList(key) {
+			return false
+		}
+	}
+
 	lb.mu.Lock()
 	defer lb.mu.Unlock()
 
@@ -56,6 +70,12 @@ func (lb *LeakyBucket) Allow(key string) bool {
 
 	b.level++
 	return true
+}
+
+func (lb *LeakyBucket) Reset(key string) {
+	lb.mu.Lock()
+	defer lb.mu.Unlock()
+	delete(lb.buckets, key)
 }
 
 func (lb *LeakyBucket) evict() {
