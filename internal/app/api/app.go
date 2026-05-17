@@ -2,22 +2,28 @@ package api
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
 	"github.com/Romasmi/anti-bruteforce/internal/logger"
+	"github.com/Romasmi/anti-bruteforce/internal/repository/iplist"
 	grpcserver "github.com/Romasmi/anti-bruteforce/internal/server/grpc"
 	internalhttp "github.com/Romasmi/anti-bruteforce/internal/server/http"
 	"github.com/Romasmi/anti-bruteforce/internal/usecases"
+	"github.com/Romasmi/anti-bruteforce/migrations"
 	"github.com/Romasmi/anti-bruteforce/pkg/ratelimiter"
 	leakybucket "github.com/Romasmi/anti-bruteforce/pkg/ratelimiter/algorithms/leackybucket"
+	_ "github.com/jackc/pgx/v5/stdlib"
 )
 
 type App struct {
 	config     Config
 	logger     *logger.Logger
+	db         *sql.DB
 	grpcServer *grpcserver.Server
 	httpServer *internalhttp.Server
+	IpRepo     *iplist.IpRepo
 }
 
 func New(conf Config, l *logger.Logger) *App {
@@ -28,7 +34,18 @@ func New(conf Config, l *logger.Logger) *App {
 }
 
 func (a *App) Init(_ context.Context) error {
-	limiter := buildRateLimiter(a.config.RateLimiter)
+	database, err := openDB(a.config.DB.DSN)
+	if err != nil {
+		return fmt.Errorf("open db: %w", err)
+	}
+	a.db = database
+
+	if err := migrations.Migrate(a.db); err != nil {
+		return fmt.Errorf("migrate: %w", err)
+	}
+
+	a.IpRepo = iplist.NewIpRepo(a.db)
+	limiter := buildRateLimiter(a.config.RateLimiter, a.IpRepo)
 	ucs := usecases.NewUsecases(a.logger, limiter)
 
 	a.grpcServer = grpcserver.NewServer(a.logger, ucs)
@@ -70,21 +87,40 @@ func (a *App) Run(ctx context.Context) error {
 	}
 	a.grpcServer.Stop()
 
+	if err := a.db.Close(); err != nil {
+		a.logger.Error("failed to close db: " + err.Error())
+	}
+
 	return nil
 }
 
-func buildRateLimiter(conf RateLimiterConf) ratelimiter.RateLimiter {
+func openDB(dsn string) (*sql.DB, error) {
+	database, err := sql.Open("pgx", dsn)
+	if err != nil {
+		return nil, err
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := database.PingContext(ctx); err != nil {
+		_ = database.Close()
+		return nil, err
+	}
+	return database, nil
+}
+
+func buildRateLimiter(conf RateLimiterConf, ipRepo leakybucket.Repository) ratelimiter.RateLimiter {
 	return ratelimiter.NewRateLimiter(ratelimiter.AlgorithmMap{
-		usecases.StrategyLogin:    newBucket(conf.Login),
-		usecases.StrategyPassword: newBucket(conf.Password),
-		usecases.StrategyIP:       newBucket(conf.IP),
+		usecases.StrategyLogin:    newBucket(conf.Login, nil),
+		usecases.StrategyPassword: newBucket(conf.Password, nil),
+		usecases.StrategyIP:       newBucket(conf.IP, ipRepo),
 	})
 }
 
-func newBucket(conf BucketConf) *leakybucket.LeakyBucket {
+func newBucket(conf BucketConf, repo leakybucket.Repository) *leakybucket.LeakyBucket {
 	return leakybucket.NewLeakyBucket(leakybucket.LeakyBucketParams{
 		Capacity: conf.Capacity,
 		LeakRate: conf.Capacity / conf.WindowSeconds,
 		TTL:      2 * time.Duration(conf.WindowSeconds) * time.Second,
+		Repo:     repo,
 	})
 }
