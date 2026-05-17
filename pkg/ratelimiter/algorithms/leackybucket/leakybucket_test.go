@@ -6,6 +6,8 @@ import (
 )
 
 func TestLeakyBucket_BasicTest(t *testing.T) {
+	t.Parallel()
+
 	// 5 requests per minute
 	lb := NewLeakyBucket(LeakyBucketParams{
 		Capacity: 5,
@@ -24,6 +26,8 @@ func TestLeakyBucket_BasicTest(t *testing.T) {
 }
 
 func TestLeakyBucket_LeaksOverTime(t *testing.T) {
+	t.Parallel()
+
 	// capacity=2, leakRate=2/s so bucket fully drains in 1 second
 	lb := NewLeakyBucket(LeakyBucketParams{
 		Capacity: 2,
@@ -46,6 +50,8 @@ func TestLeakyBucket_LeaksOverTime(t *testing.T) {
 }
 
 func TestLeakyBucket_IndependentKeys(t *testing.T) {
+	t.Parallel()
+
 	lb := NewLeakyBucket(LeakyBucketParams{
 		Capacity: 2,
 		LeakRate: 2.0 / 60.0,
@@ -64,6 +70,8 @@ func TestLeakyBucket_IndependentKeys(t *testing.T) {
 }
 
 func TestLeakyBucket_WhiteList(t *testing.T) {
+	t.Parallel()
+
 	repo := NewMemoryRepository()
 	repo.AddToWhiteList("trusted-ip")
 
@@ -89,6 +97,8 @@ func TestLeakyBucket_WhiteList(t *testing.T) {
 }
 
 func TestLeakyBucket_BlackList(t *testing.T) {
+	t.Parallel()
+
 	repo := NewMemoryRepository()
 	repo.AddToBlackList("banned-ip")
 
@@ -113,6 +123,8 @@ func TestLeakyBucket_BlackList(t *testing.T) {
 }
 
 func TestLeakyBucket_BlackListTakesPrecedenceOverWhiteList(t *testing.T) {
+	t.Parallel()
+
 	repo := NewMemoryRepository()
 	repo.AddToWhiteList("key")
 	repo.AddToBlackList("key")
@@ -136,6 +148,8 @@ func TestLeakyBucket_BlackListTakesPrecedenceOverWhiteList(t *testing.T) {
 }
 
 func TestLeakyBucket_Reset(t *testing.T) {
+	t.Parallel()
+
 	lb := NewLeakyBucket(LeakyBucketParams{
 		Capacity: 2,
 		LeakRate: 2.0 / 60.0,
@@ -157,6 +171,8 @@ func TestLeakyBucket_Reset(t *testing.T) {
 }
 
 func TestLeakyBucket_ResetUnknownKey(t *testing.T) {
+	t.Parallel()
+
 	lb := NewLeakyBucket(LeakyBucketParams{
 		Capacity: 5,
 		LeakRate: 5.0 / 60.0,

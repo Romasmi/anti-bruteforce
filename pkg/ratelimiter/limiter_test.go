@@ -13,91 +13,94 @@ const (
 	StrategyIP       Strategy = "ip"
 )
 
-func TestRateLimiter_AllStrategiesMustPass(t *testing.T) {
+func TestRateLimiter_LoginStrategy_BlocksAfterCapacity(t *testing.T) {
+	t.Parallel()
+
 	rl := newLimiter()
+	checks := StrategyMap{
+		StrategyLogin:    "userA",
+		StrategyPassword: "secret",
+		StrategyIP:       "127.0.0.1",
+	}
 
-	t.Run("login strategy blocks first", func(t *testing.T) {
-		checks := StrategyMap{
-			StrategyLogin:    "userA",
-			StrategyPassword: "secret",
-			StrategyIP:       "127.0.0.1",
-		}
+	ok, err := rl.Allow(checks)
+	if err != nil || !ok {
+		t.Fatal("expected first request to be allowed")
+	}
 
-		ok, err := rl.Allow(checks)
-		if err != nil || !ok {
-			t.Fatal("expected first request to be allowed")
-		}
+	// login bucket capacity = 1
+	ok, err = rl.Allow(checks)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ok {
+		t.Fatal("expected denial after login bucket exhausted")
+	}
+}
 
-		// login bucket capacity = 1
-		ok, err = rl.Allow(checks)
-		if err != nil {
-			t.Fatal(err)
-		}
-		if ok {
-			t.Fatal("expected denial after login bucket exhausted")
-		}
-	})
+func TestRateLimiter_PasswordStrategy_BlocksAfterCapacity(t *testing.T) {
+	t.Parallel()
 
-	t.Run("password strategy blocks after refill wait", func(t *testing.T) {
-		time.Sleep(time.Second)
+	rl := newLimiter()
+	checks := StrategyMap{
+		StrategyLogin:    "userB",
+		StrategyPassword: "shared-password",
+		StrategyIP:       "127.0.0.2",
+	}
 
-		checks := StrategyMap{
-			StrategyLogin:    "userB",
-			StrategyPassword: "shared-password",
-			StrategyIP:       "127.0.0.2",
-		}
-
-		// password capacity = 2
-		for i := 0; i < 2; i++ {
-			ok, err := rl.Allow(checks)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if !ok {
-				t.Fatalf("expected request %d to pass", i+1)
-			}
-		}
-
+	// password capacity = 2
+	for i := 0; i < 2; i++ {
 		ok, err := rl.Allow(checks)
 		if err != nil {
 			t.Fatal(err)
 		}
-		if ok {
-			t.Fatal("expected denial after password bucket exhausted")
+		if !ok {
+			t.Fatalf("expected request %d to pass", i+1)
 		}
-	})
+	}
 
-	t.Run("ip strategy blocks after refill wait", func(t *testing.T) {
-		time.Sleep(time.Second)
+	ok, err := rl.Allow(checks)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ok {
+		t.Fatal("expected denial after password bucket exhausted")
+	}
+}
 
-		checks := StrategyMap{
-			StrategyLogin:    "userC",
-			StrategyPassword: "another-password",
-			StrategyIP:       "10.0.0.1",
-		}
+func TestRateLimiter_IPStrategy_BlocksAfterCapacity(t *testing.T) {
+	t.Parallel()
 
-		// ip capacity = 3
-		for i := 0; i < 3; i++ {
-			ok, err := rl.Allow(checks)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if !ok {
-				t.Fatalf("expected request %d to pass", i+1)
-			}
-		}
+	rl := newLimiter()
+	checks := StrategyMap{
+		StrategyLogin:    "userC",
+		StrategyPassword: "another-password",
+		StrategyIP:       "10.0.0.1",
+	}
 
+	// ip capacity = 3
+	for i := 0; i < 3; i++ {
 		ok, err := rl.Allow(checks)
 		if err != nil {
 			t.Fatal(err)
 		}
-		if ok {
-			t.Fatal("expected denial after IP bucket exhausted")
+		if !ok {
+			t.Fatalf("expected request %d to pass", i+1)
 		}
-	})
+	}
+
+	ok, err := rl.Allow(checks)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if ok {
+		t.Fatal("expected denial after IP bucket exhausted")
+	}
 }
 
 func TestRateLimiter_UnknownStrategy(t *testing.T) {
+	t.Parallel()
+
 	rl := newLimiter()
 
 	_, err := rl.Allow(StrategyMap{
