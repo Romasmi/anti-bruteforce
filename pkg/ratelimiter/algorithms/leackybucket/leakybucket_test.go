@@ -1,4 +1,4 @@
-package ratelimiter
+package leackybucket
 
 import (
 	"testing"
@@ -7,7 +7,11 @@ import (
 
 func TestLeakyBucket_BasicTest(t *testing.T) {
 	// 5 requests per minute
-	lb := NewLeakyBucket(5, 5.0/60.0, time.Minute)
+	lb := NewLeakyBucket(LeakyBucketConfig{
+		Capacity: 5,
+		LeakRate: 5.0 / 60.0,
+		TTL:      time.Minute,
+	})
 
 	for i := 0; i < 5; i++ {
 		if !lb.Allow("user") {
@@ -21,7 +25,11 @@ func TestLeakyBucket_BasicTest(t *testing.T) {
 
 func TestLeakyBucket_LeaksOverTime(t *testing.T) {
 	// capacity=2, leakRate=2/s so bucket fully drains in 1 second
-	lb := NewLeakyBucket(2, 2.0, time.Minute)
+	lb := NewLeakyBucket(LeakyBucketConfig{
+		Capacity: 2,
+		LeakRate: 2.0,
+		TTL:      time.Minute,
+	})
 
 	lb.Allow("user")
 	lb.Allow("user")
@@ -38,7 +46,11 @@ func TestLeakyBucket_LeaksOverTime(t *testing.T) {
 }
 
 func TestLeakyBucket_IndependentKeys(t *testing.T) {
-	lb := NewLeakyBucket(2, 2.0/60.0, time.Minute)
+	lb := NewLeakyBucket(LeakyBucketConfig{
+		Capacity: 2,
+		LeakRate: 2.0 / 60.0,
+		TTL:      time.Minute,
+	})
 
 	lb.Allow("userA")
 	lb.Allow("userA")

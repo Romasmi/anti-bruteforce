@@ -7,11 +7,16 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
+type Strategy string
+
+type AlgorithmMap map[Strategy]Algorithm
+type StrategyMap map[Strategy]string
+
 type RateLimiter struct {
-	strategies map[Strategy]Algorithm
+	strategies AlgorithmMap
 }
 
-func NewRateLimiter(strategies map[Strategy]Algorithm) *RateLimiter {
+func NewRateLimiter(strategies AlgorithmMap) *RateLimiter {
 	return &RateLimiter{strategies: strategies}
 }
 
