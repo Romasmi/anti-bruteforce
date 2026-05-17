@@ -19,6 +19,7 @@ services:
       - .env
     environment:
       - POSTGRES_HOST=postgres-test
+    command: ["./anti-bruteforce", "-config", "configs/config.integration.yaml"]
     depends_on:
       postgres-test:
         condition: service_healthy

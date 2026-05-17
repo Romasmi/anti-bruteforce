@@ -18,6 +18,7 @@ RUN chown -R appuser:appgroup /app
 COPY --from=builder --chown=appuser:appgroup /app/anti-bruteforce .
 COPY --from=builder --chown=appuser:appgroup /app/migrations ./migrations
 COPY --from=builder --chown=appuser:appgroup /app/configs/config.yaml ./configs/config.yaml
+COPY --from=builder --chown=appuser:appgroup /app/configs/config.integration.yaml ./configs/config.integration.yaml
 USER appuser
 
 EXPOSE 8080 50051
