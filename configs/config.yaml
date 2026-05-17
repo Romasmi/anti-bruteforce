@@ -6,6 +6,8 @@ http:
 grpc:
   host: "${ANTI_BRUTEFORCE_GRPC_HOST}"
   port: "${ANTI_BRUTEFORCE_GRPC_PORT}"
+db:
+  dsn: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable"
 rate_limiter:
   login:
     capacity: 10
