@@ -20,11 +20,11 @@ type denyAllLimiter struct{}
 func (denyAllLimiter) Allow(_ map[string]string) (bool, error) { return false, nil }
 func (denyAllLimiter) Reset(_, _ string) error                 { return nil }
 
-// requireCode asserts that err is a gRPC status error with the expected code.
-func requireCode(t *testing.T, err error, code codes.Code) {
+// requireCode asserts that err is a gRPC InvalidArgument status error.
+func requireCode(t *testing.T, err error) {
 	t.Helper()
 	require.Error(t, err)
 	st, ok := status.FromError(err)
 	require.True(t, ok)
-	require.Equal(t, code, st.Code())
+	require.Equal(t, codes.InvalidArgument, st.Code())
 }

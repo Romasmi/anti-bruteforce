@@ -7,17 +7,17 @@ import (
 	"github.com/Romasmi/anti-bruteforce/pkg/ratelimiter/algorithms/leackybucket"
 )
 
-var _ leackybucket.Repository = (*IpRepo)(nil)
+var _ leackybucket.Repository = (*IPRepo)(nil)
 
-type IpRepo struct {
+type IPRepo struct {
 	db *sql.DB
 }
 
-func NewIpRepo(db *sql.DB) *IpRepo {
-	return &IpRepo{db: db}
+func NewIPRepo(db *sql.DB) *IPRepo {
+	return &IPRepo{db: db}
 }
 
-func (r *IpRepo) AddToWhitelist(cidr string) error {
+func (r *IPRepo) AddToWhitelist(cidr string) error {
 	_, n, err := net.ParseCIDR(cidr)
 	if err != nil {
 		return err
@@ -26,7 +26,7 @@ func (r *IpRepo) AddToWhitelist(cidr string) error {
 	return err
 }
 
-func (r *IpRepo) RemoveFromWhitelist(cidr string) error {
+func (r *IPRepo) RemoveFromWhitelist(cidr string) error {
 	_, n, err := net.ParseCIDR(cidr)
 	if err != nil {
 		return err
@@ -35,7 +35,7 @@ func (r *IpRepo) RemoveFromWhitelist(cidr string) error {
 	return err
 }
 
-func (r *IpRepo) AddToBlacklist(cidr string) error {
+func (r *IPRepo) AddToBlacklist(cidr string) error {
 	_, n, err := net.ParseCIDR(cidr)
 	if err != nil {
 		return err
@@ -44,7 +44,7 @@ func (r *IpRepo) AddToBlacklist(cidr string) error {
 	return err
 }
 
-func (r *IpRepo) RemoveFromBlacklist(cidr string) error {
+func (r *IPRepo) RemoveFromBlacklist(cidr string) error {
 	_, n, err := net.ParseCIDR(cidr)
 	if err != nil {
 		return err
@@ -53,15 +53,15 @@ func (r *IpRepo) RemoveFromBlacklist(cidr string) error {
 	return err
 }
 
-func (r *IpRepo) ExistsInWhiteList(ip string) bool {
+func (r *IPRepo) ExistsInWhiteList(ip string) bool {
 	return r.existsIn("ip_whitelist", ip)
 }
 
-func (r *IpRepo) ExistsInBlackList(ip string) bool {
+func (r *IPRepo) ExistsInBlackList(ip string) bool {
 	return r.existsIn("ip_blacklist", ip)
 }
 
-func (r *IpRepo) existsIn(table, ip string) bool {
+func (r *IPRepo) existsIn(table, ip string) bool {
 	var exists bool
 	err := r.db.QueryRow(
 		`SELECT EXISTS(SELECT 1 FROM `+table+` WHERE network >> $1::inet)`,

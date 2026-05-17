@@ -12,10 +12,10 @@ type Config struct {
 	HTTP        HTTPConf        `yaml:"http"`
 	GRPC        GRPCConf        `yaml:"grpc"`
 	RateLimiter RateLimiterConf `yaml:"rate_limiter"`
-	DB          DbConf          `yaml:"db"`
+	DB          DBConf          `yaml:"db"`
 }
 
-type DbConf struct {
+type DBConf struct {
 	DSN string `yaml:"dsn"`
 }
 

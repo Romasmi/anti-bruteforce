@@ -8,7 +8,6 @@ import (
 	"github.com/Romasmi/anti-bruteforce/pkg/ratelimiter"
 	leackybucket "github.com/Romasmi/anti-bruteforce/pkg/ratelimiter/algorithms/leackybucket"
 	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc/codes"
 )
 
 func TestCheckAuthUsecase_Validation(t *testing.T) {
@@ -19,37 +18,37 @@ func TestCheckAuthUsecase_Validation(t *testing.T) {
 	t.Run("empty login", func(t *testing.T) {
 		t.Parallel()
 		_, err := uc.Do(ctx, &usecases.CheckAuthInput{Login: "", Password: "password123", IP: "192.168.1.1"})
-		requireCode(t, err, codes.InvalidArgument)
+		requireCode(t, err)
 	})
 
 	t.Run("empty password", func(t *testing.T) {
 		t.Parallel()
 		_, err := uc.Do(ctx, &usecases.CheckAuthInput{Login: "user123", Password: "", IP: "192.168.1.1"})
-		requireCode(t, err, codes.InvalidArgument)
+		requireCode(t, err)
 	})
 
 	t.Run("empty ip", func(t *testing.T) {
 		t.Parallel()
 		_, err := uc.Do(ctx, &usecases.CheckAuthInput{Login: "user123", Password: "password123", IP: ""})
-		requireCode(t, err, codes.InvalidArgument)
+		requireCode(t, err)
 	})
 
 	t.Run("invalid ip format", func(t *testing.T) {
 		t.Parallel()
 		_, err := uc.Do(ctx, &usecases.CheckAuthInput{Login: "user123", Password: "password123", IP: "not-an-ip"})
-		requireCode(t, err, codes.InvalidArgument)
+		requireCode(t, err)
 	})
 
 	t.Run("ipv6 rejected", func(t *testing.T) {
 		t.Parallel()
 		_, err := uc.Do(ctx, &usecases.CheckAuthInput{Login: "user123", Password: "password123", IP: "2001:db8::1"})
-		requireCode(t, err, codes.InvalidArgument)
+		requireCode(t, err)
 	})
 
 	t.Run("wrong request type", func(t *testing.T) {
 		t.Parallel()
 		_, err := uc.Do(ctx, "not a CheckAuthInput")
-		requireCode(t, err, codes.InvalidArgument)
+		requireCode(t, err)
 	})
 }
 

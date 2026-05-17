@@ -23,7 +23,7 @@ type App struct {
 	db         *sql.DB
 	grpcServer *grpcserver.Server
 	httpServer *internalhttp.Server
-	IpRepo     *iplist.IpRepo
+	IPRepo     *iplist.IPRepo
 }
 
 func New(conf Config, l *logger.Logger) *App {
@@ -44,8 +44,8 @@ func (a *App) Init(_ context.Context) error {
 		return fmt.Errorf("migrate: %w", err)
 	}
 
-	a.IpRepo = iplist.NewIpRepo(a.db)
-	limiter := buildRateLimiter(a.config.RateLimiter, a.IpRepo)
+	a.IPRepo = iplist.NewIPRepo(a.db)
+	limiter := buildRateLimiter(a.config.RateLimiter, a.IPRepo)
 	ucs := usecases.NewUsecases(a.logger, limiter)
 
 	a.grpcServer = grpcserver.NewServer(a.logger, ucs)

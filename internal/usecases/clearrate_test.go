@@ -8,7 +8,6 @@ import (
 	"github.com/Romasmi/anti-bruteforce/pkg/ratelimiter"
 	leackybucket "github.com/Romasmi/anti-bruteforce/pkg/ratelimiter/algorithms/leackybucket"
 	"github.com/stretchr/testify/require"
-	"google.golang.org/grpc/codes"
 )
 
 func TestClearRateUsecase_Validation(t *testing.T) {
@@ -19,25 +18,25 @@ func TestClearRateUsecase_Validation(t *testing.T) {
 	t.Run("empty both", func(t *testing.T) {
 		t.Parallel()
 		_, err := uc.Do(ctx, &usecases.ClearRateInput{Login: "", IP: ""})
-		requireCode(t, err, codes.InvalidArgument)
+		requireCode(t, err)
 	})
 
 	t.Run("invalid ip format", func(t *testing.T) {
 		t.Parallel()
 		_, err := uc.Do(ctx, &usecases.ClearRateInput{IP: "999.999.999.999"})
-		requireCode(t, err, codes.InvalidArgument)
+		requireCode(t, err)
 	})
 
 	t.Run("ipv6 rejected", func(t *testing.T) {
 		t.Parallel()
 		_, err := uc.Do(ctx, &usecases.ClearRateInput{IP: "::1"})
-		requireCode(t, err, codes.InvalidArgument)
+		requireCode(t, err)
 	})
 
 	t.Run("wrong request type", func(t *testing.T) {
 		t.Parallel()
 		_, err := uc.Do(ctx, 42)
-		requireCode(t, err, codes.InvalidArgument)
+		requireCode(t, err)
 	})
 }
 
