@@ -60,6 +60,9 @@ generate:
 		--openapiv2_out=pkg/api --openapiv2_opt=logtostderr=true \
 		api/AntiBruteforce.proto
 
+puml:
+	plantuml -tsvg pkg/ratelimiter/docs/*.puml
+
 #load-tests:
 #	k6 run load_tests/<add test later>
 
@@ -73,4 +76,4 @@ clean:
 	rm -rf bin/
 	go clean -cache -testcache
 
-.PHONY: build run run-api run-all build-img run-img version test api-test unit-test lint migration generate load-tests up down integration-tests clean
+.PHONY: build run run-api run-all build-img run-img version test api-test unit-test lint migration generate puml load-tests up down integration-tests clean
