@@ -13,15 +13,20 @@ type (
 	StrategyMap  = map[string]string
 )
 
-type RateLimiter struct {
+type Impl struct {
 	strategies AlgorithmMap
 }
 
-func NewRateLimiter(strategies AlgorithmMap) *RateLimiter {
-	return &RateLimiter{strategies: strategies}
+type RateLimiter interface {
+	Allow(checks map[string]string) (bool, error)
+	Reset(strategy, key string) error
 }
 
-func (rl *RateLimiter) Allow(checks StrategyMap) (bool, error) {
+func NewRateLimiter(strategies AlgorithmMap) RateLimiter {
+	return &Impl{strategies: strategies}
+}
+
+func (rl *Impl) Allow(checks StrategyMap) (bool, error) {
 	for strategy := range checks {
 		if _, ok := rl.strategies[strategy]; !ok {
 			return false, fmt.Errorf("unknown strategy: %s", strategy)
@@ -50,7 +55,7 @@ func (rl *RateLimiter) Allow(checks StrategyMap) (bool, error) {
 	return !denied.Load(), nil
 }
 
-func (rl *RateLimiter) Reset(strategy, key string) error {
+func (rl *Impl) Reset(strategy, key string) error {
 	alg, ok := rl.strategies[strategy]
 	if !ok {
 		return fmt.Errorf("unknown strategy: %s", strategy)
