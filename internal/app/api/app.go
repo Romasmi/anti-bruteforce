@@ -9,6 +9,8 @@ import (
 	grpcserver "github.com/Romasmi/anti-bruteforce/internal/server/grpc"
 	internalhttp "github.com/Romasmi/anti-bruteforce/internal/server/http"
 	"github.com/Romasmi/anti-bruteforce/internal/usecases"
+	"github.com/Romasmi/anti-bruteforce/pkg/ratelimiter"
+	leakybucket "github.com/Romasmi/anti-bruteforce/pkg/ratelimiter/algorithms/leackybucket"
 )
 
 type App struct {
@@ -26,7 +28,8 @@ func New(conf Config, l *logger.Logger) *App {
 }
 
 func (a *App) Init(_ context.Context) error {
-	ucs := usecases.NewUsecases(a.logger)
+	limiter := buildRateLimiter(a.config.RateLimiter)
+	ucs := usecases.NewUsecases(a.logger, limiter)
 
 	a.grpcServer = grpcserver.NewServer(a.logger, ucs)
 	grpcAddr := fmt.Sprintf("%s:%s", a.config.GRPC.Host, a.config.GRPC.Port)
@@ -68,4 +71,20 @@ func (a *App) Run(ctx context.Context) error {
 	a.grpcServer.Stop()
 
 	return nil
+}
+
+func buildRateLimiter(conf RateLimiterConf) ratelimiter.RateLimiter {
+	return ratelimiter.NewRateLimiter(ratelimiter.AlgorithmMap{
+		usecases.StrategyLogin:    newBucket(conf.Login),
+		usecases.StrategyPassword: newBucket(conf.Password),
+		usecases.StrategyIP:       newBucket(conf.IP),
+	})
+}
+
+func newBucket(conf BucketConf) *leakybucket.LeakyBucket {
+	return leakybucket.NewLeakyBucket(leakybucket.LeakyBucketParams{
+		Capacity: conf.Capacity,
+		LeakRate: conf.Capacity / conf.WindowSeconds,
+		TTL:      2 * time.Duration(conf.WindowSeconds) * time.Second,
+	})
 }

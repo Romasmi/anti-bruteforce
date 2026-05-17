@@ -9,6 +9,12 @@ const (
 	ClearRate
 )
 
+const (
+	StrategyLogin    = "login"
+	StrategyPassword = "password"
+	StrategyIP       = "ip"
+)
+
 type CheckAuthInput struct {
 	Login    string
 	Password string
