@@ -10,19 +10,25 @@ type bucket struct {
 	lastUpdated time.Time
 }
 
+type LeakyBucketConfig struct {
+	Capacity float64
+	LeakRate float64       // tokens per second; typically Capacity / WindowSeconds
+	TTL      time.Duration // how long before an idle bucket is evicted
+}
+
 type LeakyBucket struct {
 	capacity float64
-	leakRate float64 // tokens leaked per second
+	leakRate float64
 	ttl      time.Duration
 	mu       sync.Mutex
 	buckets  map[string]*bucket
 }
 
-func NewLeakyBucket(capacity, leakRate float64, ttl time.Duration) *LeakyBucket {
+func NewLeakyBucket(config LeakyBucketConfig) *LeakyBucket {
 	lb := &LeakyBucket{
-		capacity: capacity,
-		leakRate: leakRate,
-		ttl:      ttl,
+		capacity: config.Capacity,
+		leakRate: config.LeakRate,
+		ttl:      config.TTL,
 		buckets:  make(map[string]*bucket),
 	}
 	go lb.evict()
