@@ -8,9 +8,9 @@ import (
 )
 
 type (
-	Strategy     string
-	AlgorithmMap map[Strategy]Algorithm
-	StrategyMap  map[Strategy]string
+	Strategy     = string
+	AlgorithmMap = map[string]Algorithm
+	StrategyMap  = map[string]string
 )
 
 type RateLimiter struct {
@@ -48,4 +48,13 @@ func (rl *RateLimiter) Allow(checks StrategyMap) (bool, error) {
 		return false, err
 	}
 	return !denied.Load(), nil
+}
+
+func (rl *RateLimiter) Reset(strategy, key string) error {
+	alg, ok := rl.strategies[strategy]
+	if !ok {
+		return fmt.Errorf("unknown strategy: %s", strategy)
+	}
+	alg.Reset(key)
+	return nil
 }
