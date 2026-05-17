@@ -8,9 +8,23 @@ import (
 )
 
 type Config struct {
-	Logger LoggerConf `yaml:"logger"`
-	HTTP   HTTPConf   `yaml:"http"`
-	GRPC   GRPCConf   `yaml:"grpc"`
+	Logger      LoggerConf      `yaml:"logger"`
+	HTTP        HTTPConf        `yaml:"http"`
+	GRPC        GRPCConf        `yaml:"grpc"`
+	RateLimiter RateLimiterConf `yaml:"rate_limiter"`
+}
+
+type RateLimiterConf struct {
+	Login    BucketConf `yaml:"login"`
+	Password BucketConf `yaml:"password"`
+	IP       BucketConf `yaml:"ip"`
+}
+
+// BucketConf configures a single leaky-bucket strategy.
+// LeakRate is derived as Capacity / WindowSeconds (tokens per second).
+type BucketConf struct {
+	Capacity      float64 `yaml:"capacity"`
+	WindowSeconds float64 `yaml:"window_seconds"`
 }
 
 type LoggerConf struct {

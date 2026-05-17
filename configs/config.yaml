@@ -6,3 +6,13 @@ http:
 grpc:
   host: "${ANTI_BRUTEFORCE_GRPC_HOST}"
   port: "${ANTI_BRUTEFORCE_GRPC_PORT}"
+rate_limiter:
+  login:
+    capacity: 10
+    window_seconds: 60
+  password:
+    capacity: 100
+    window_seconds: 60
+  ip:
+    capacity: 1000
+    window_seconds: 60
