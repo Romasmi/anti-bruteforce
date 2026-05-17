@@ -1,0 +1,103 @@
+@startuml ratelimiter-go
+
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam linetype ortho
+
+hide empty members
+
+package "pkg/ratelimiter" {
+
+    interface Algorithm {
+        + Allow(key string) bool
+        + Reset(key string)
+    }
+
+    class RateLimiter {
+        - strategies map[string]Algorithm
+        --
+        + Allow(checks map[string]string) (bool, error)
+    }
+
+    note right of RateLimiter
+        Strategy = string
+
+        checks:
+        strategy -> key
+
+        Example:
+        {
+            "login": ip,
+            "password": email
+        }
+
+        Allow executes strategies concurrently.
+    end note
+
+    RateLimiter --> Algorithm : uses
+}
+
+package "pkg/ratelimiter/algorithms/leakybucket" {
+
+    interface Repository {
+        + ExistsInWhiteList(key string) bool
+        + ExistsInBlackList(key string) bool
+    }
+
+    struct LeakyBucketConfig {
+        + Capacity float64
+        + LeakRate float64
+        + TTL Duration
+    }
+
+    class LeakyBucket {
+        - capacity float64
+        - leakRate float64
+        - ttl Duration
+        - buckets map[string]*bucket
+        - mu Mutex
+        - repo Repository
+        --
+        + NewLeakyBucket(cfg LeakyBucketConfig, repo Repository) *LeakyBucket
+        + Allow(key string) bool
+        + Reset(key string)
+        - evict()
+    }
+
+    class bucket {
+        - level float64
+        - lastUpdated Time
+    }
+
+    class MemoryRepository {
+        - whiteList map[string]struct{}
+        - blackList map[string]struct{}
+        - mu RWMutex
+        --
+        + ExistsInWhiteList(key string) bool
+        + ExistsInBlackList(key string) bool
+        + AddToWhiteList(key string)
+        + RemoveFromWhiteList(key string)
+        + AddToBlackList(key string)
+        + RemoveFromBlackList(key string)
+    }
+
+    LeakyBucket ..|> Algorithm
+    MemoryRepository ..|> Repository
+
+    LeakyBucket --> Repository : optional
+    LeakyBucket *--> bucket : owns
+}
+
+package "future" {
+
+    class TokenBucket
+    class SlidingWindowCounter
+    class RedisRepository
+
+    TokenBucket ..|> Algorithm
+    SlidingWindowCounter ..|> Algorithm
+    RedisRepository ..|> Repository
+}
+
+@enduml
