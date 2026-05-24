@@ -131,6 +131,114 @@ func local_request_AntiBruteforce_ClearRate_0(ctx context.Context, marshaler run
 	return msg, metadata, err
 }
 
+func request_AntiBruteforce_AddToBlacklist_0(ctx context.Context, marshaler runtime.Marshaler, client AntiBruteforceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq IPListRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.AddToBlacklist(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_AntiBruteforce_AddToBlacklist_0(ctx context.Context, marshaler runtime.Marshaler, server AntiBruteforceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq IPListRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	msg, err := server.AddToBlacklist(ctx, &protoReq)
+	return msg, metadata, err
+}
+
+func request_AntiBruteforce_RemoveFromBlacklist_0(ctx context.Context, marshaler runtime.Marshaler, client AntiBruteforceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq IPListRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.RemoveFromBlacklist(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_AntiBruteforce_RemoveFromBlacklist_0(ctx context.Context, marshaler runtime.Marshaler, server AntiBruteforceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq IPListRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	msg, err := server.RemoveFromBlacklist(ctx, &protoReq)
+	return msg, metadata, err
+}
+
+func request_AntiBruteforce_AddToWhitelist_0(ctx context.Context, marshaler runtime.Marshaler, client AntiBruteforceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq IPListRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.AddToWhitelist(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_AntiBruteforce_AddToWhitelist_0(ctx context.Context, marshaler runtime.Marshaler, server AntiBruteforceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq IPListRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	msg, err := server.AddToWhitelist(ctx, &protoReq)
+	return msg, metadata, err
+}
+
+func request_AntiBruteforce_RemoveFromWhitelist_0(ctx context.Context, marshaler runtime.Marshaler, client AntiBruteforceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq IPListRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	msg, err := client.RemoveFromWhitelist(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+}
+
+func local_request_AntiBruteforce_RemoveFromWhitelist_0(ctx context.Context, marshaler runtime.Marshaler, server AntiBruteforceServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var (
+		protoReq IPListRequest
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	msg, err := server.RemoveFromWhitelist(ctx, &protoReq)
+	return msg, metadata, err
+}
+
 // RegisterAntiBruteforceHandlerServer registers the http handlers for service AntiBruteforce to "mux".
 // UnaryRPC     :call AntiBruteforceServer directly.
 // StreamingRPC :currently unsupported pending https://github.com/grpc/grpc-go/issues/906.
@@ -216,6 +324,86 @@ func RegisterAntiBruteforceHandlerServer(ctx context.Context, mux *runtime.Serve
 			return
 		}
 		forward_AntiBruteforce_ClearRate_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodPost, pattern_AntiBruteforce_AddToBlacklist_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/event.AntiBruteforce/AddToBlacklist", runtime.WithHTTPPathPattern("/blacklist"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_AntiBruteforce_AddToBlacklist_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_AntiBruteforce_AddToBlacklist_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodDelete, pattern_AntiBruteforce_RemoveFromBlacklist_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/event.AntiBruteforce/RemoveFromBlacklist", runtime.WithHTTPPathPattern("/blacklist"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_AntiBruteforce_RemoveFromBlacklist_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_AntiBruteforce_RemoveFromBlacklist_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodPost, pattern_AntiBruteforce_AddToWhitelist_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/event.AntiBruteforce/AddToWhitelist", runtime.WithHTTPPathPattern("/whitelist"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_AntiBruteforce_AddToWhitelist_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_AntiBruteforce_AddToWhitelist_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodDelete, pattern_AntiBruteforce_RemoveFromWhitelist_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/event.AntiBruteforce/RemoveFromWhitelist", runtime.WithHTTPPathPattern("/whitelist"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_AntiBruteforce_RemoveFromWhitelist_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_AntiBruteforce_RemoveFromWhitelist_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
 	return nil
@@ -325,19 +513,95 @@ func RegisterAntiBruteforceHandlerClient(ctx context.Context, mux *runtime.Serve
 		}
 		forward_AntiBruteforce_ClearRate_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodPost, pattern_AntiBruteforce_AddToBlacklist_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/event.AntiBruteforce/AddToBlacklist", runtime.WithHTTPPathPattern("/blacklist"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_AntiBruteforce_AddToBlacklist_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_AntiBruteforce_AddToBlacklist_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodDelete, pattern_AntiBruteforce_RemoveFromBlacklist_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/event.AntiBruteforce/RemoveFromBlacklist", runtime.WithHTTPPathPattern("/blacklist"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_AntiBruteforce_RemoveFromBlacklist_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_AntiBruteforce_RemoveFromBlacklist_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodPost, pattern_AntiBruteforce_AddToWhitelist_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/event.AntiBruteforce/AddToWhitelist", runtime.WithHTTPPathPattern("/whitelist"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_AntiBruteforce_AddToWhitelist_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_AntiBruteforce_AddToWhitelist_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+	mux.Handle(http.MethodDelete, pattern_AntiBruteforce_RemoveFromWhitelist_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/event.AntiBruteforce/RemoveFromWhitelist", runtime.WithHTTPPathPattern("/whitelist"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_AntiBruteforce_RemoveFromWhitelist_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_AntiBruteforce_RemoveFromWhitelist_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
 	return nil
 }
 
 var (
-	pattern_AntiBruteforce_Hello_0       = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"hello-world"}, ""))
-	pattern_AntiBruteforce_Healthcheck_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"healthcheck"}, ""))
-	pattern_AntiBruteforce_CheckAuth_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"auth", "check"}, ""))
-	pattern_AntiBruteforce_ClearRate_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"clear-rate"}, ""))
+	pattern_AntiBruteforce_Hello_0               = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"hello-world"}, ""))
+	pattern_AntiBruteforce_Healthcheck_0         = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"healthcheck"}, ""))
+	pattern_AntiBruteforce_CheckAuth_0           = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"auth", "check"}, ""))
+	pattern_AntiBruteforce_ClearRate_0           = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"clear-rate"}, ""))
+	pattern_AntiBruteforce_AddToBlacklist_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"blacklist"}, ""))
+	pattern_AntiBruteforce_RemoveFromBlacklist_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"blacklist"}, ""))
+	pattern_AntiBruteforce_AddToWhitelist_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"whitelist"}, ""))
+	pattern_AntiBruteforce_RemoveFromWhitelist_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0}, []string{"whitelist"}, ""))
 )
 
 var (
-	forward_AntiBruteforce_Hello_0       = runtime.ForwardResponseMessage
-	forward_AntiBruteforce_Healthcheck_0 = runtime.ForwardResponseMessage
-	forward_AntiBruteforce_CheckAuth_0   = runtime.ForwardResponseMessage
-	forward_AntiBruteforce_ClearRate_0   = runtime.ForwardResponseMessage
+	forward_AntiBruteforce_Hello_0               = runtime.ForwardResponseMessage
+	forward_AntiBruteforce_Healthcheck_0         = runtime.ForwardResponseMessage
+	forward_AntiBruteforce_CheckAuth_0           = runtime.ForwardResponseMessage
+	forward_AntiBruteforce_ClearRate_0           = runtime.ForwardResponseMessage
+	forward_AntiBruteforce_AddToBlacklist_0      = runtime.ForwardResponseMessage
+	forward_AntiBruteforce_RemoveFromBlacklist_0 = runtime.ForwardResponseMessage
+	forward_AntiBruteforce_AddToWhitelist_0      = runtime.ForwardResponseMessage
+	forward_AntiBruteforce_RemoveFromWhitelist_0 = runtime.ForwardResponseMessage
 )

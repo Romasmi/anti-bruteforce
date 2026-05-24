@@ -19,10 +19,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AntiBruteforce_Hello_FullMethodName       = "/event.AntiBruteforce/Hello"
-	AntiBruteforce_Healthcheck_FullMethodName = "/event.AntiBruteforce/Healthcheck"
-	AntiBruteforce_CheckAuth_FullMethodName   = "/event.AntiBruteforce/CheckAuth"
-	AntiBruteforce_ClearRate_FullMethodName   = "/event.AntiBruteforce/ClearRate"
+	AntiBruteforce_Hello_FullMethodName               = "/event.AntiBruteforce/Hello"
+	AntiBruteforce_Healthcheck_FullMethodName         = "/event.AntiBruteforce/Healthcheck"
+	AntiBruteforce_CheckAuth_FullMethodName           = "/event.AntiBruteforce/CheckAuth"
+	AntiBruteforce_ClearRate_FullMethodName           = "/event.AntiBruteforce/ClearRate"
+	AntiBruteforce_AddToBlacklist_FullMethodName      = "/event.AntiBruteforce/AddToBlacklist"
+	AntiBruteforce_RemoveFromBlacklist_FullMethodName = "/event.AntiBruteforce/RemoveFromBlacklist"
+	AntiBruteforce_AddToWhitelist_FullMethodName      = "/event.AntiBruteforce/AddToWhitelist"
+	AntiBruteforce_RemoveFromWhitelist_FullMethodName = "/event.AntiBruteforce/RemoveFromWhitelist"
 )
 
 // AntiBruteforceClient is the client API for AntiBruteforce service.
@@ -33,6 +37,10 @@ type AntiBruteforceClient interface {
 	Healthcheck(ctx context.Context, in *HealthcheckRequest, opts ...grpc.CallOption) (*HealthcheckResponse, error)
 	CheckAuth(ctx context.Context, in *CheckAuthRequest, opts ...grpc.CallOption) (*CheckAuthResponse, error)
 	ClearRate(ctx context.Context, in *ClearRateRequest, opts ...grpc.CallOption) (*ClearRateResponse, error)
+	AddToBlacklist(ctx context.Context, in *IPListRequest, opts ...grpc.CallOption) (*IPListResponse, error)
+	RemoveFromBlacklist(ctx context.Context, in *IPListRequest, opts ...grpc.CallOption) (*IPListResponse, error)
+	AddToWhitelist(ctx context.Context, in *IPListRequest, opts ...grpc.CallOption) (*IPListResponse, error)
+	RemoveFromWhitelist(ctx context.Context, in *IPListRequest, opts ...grpc.CallOption) (*IPListResponse, error)
 }
 
 type antiBruteforceClient struct {
@@ -83,6 +91,46 @@ func (c *antiBruteforceClient) ClearRate(ctx context.Context, in *ClearRateReque
 	return out, nil
 }
 
+func (c *antiBruteforceClient) AddToBlacklist(ctx context.Context, in *IPListRequest, opts ...grpc.CallOption) (*IPListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IPListResponse)
+	err := c.cc.Invoke(ctx, AntiBruteforce_AddToBlacklist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *antiBruteforceClient) RemoveFromBlacklist(ctx context.Context, in *IPListRequest, opts ...grpc.CallOption) (*IPListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IPListResponse)
+	err := c.cc.Invoke(ctx, AntiBruteforce_RemoveFromBlacklist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *antiBruteforceClient) AddToWhitelist(ctx context.Context, in *IPListRequest, opts ...grpc.CallOption) (*IPListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IPListResponse)
+	err := c.cc.Invoke(ctx, AntiBruteforce_AddToWhitelist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *antiBruteforceClient) RemoveFromWhitelist(ctx context.Context, in *IPListRequest, opts ...grpc.CallOption) (*IPListResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(IPListResponse)
+	err := c.cc.Invoke(ctx, AntiBruteforce_RemoveFromWhitelist_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AntiBruteforceServer is the server API for AntiBruteforce service.
 // All implementations must embed UnimplementedAntiBruteforceServer
 // for forward compatibility.
@@ -91,6 +139,10 @@ type AntiBruteforceServer interface {
 	Healthcheck(context.Context, *HealthcheckRequest) (*HealthcheckResponse, error)
 	CheckAuth(context.Context, *CheckAuthRequest) (*CheckAuthResponse, error)
 	ClearRate(context.Context, *ClearRateRequest) (*ClearRateResponse, error)
+	AddToBlacklist(context.Context, *IPListRequest) (*IPListResponse, error)
+	RemoveFromBlacklist(context.Context, *IPListRequest) (*IPListResponse, error)
+	AddToWhitelist(context.Context, *IPListRequest) (*IPListResponse, error)
+	RemoveFromWhitelist(context.Context, *IPListRequest) (*IPListResponse, error)
 	mustEmbedUnimplementedAntiBruteforceServer()
 }
 
@@ -112,6 +164,18 @@ func (UnimplementedAntiBruteforceServer) CheckAuth(context.Context, *CheckAuthRe
 }
 func (UnimplementedAntiBruteforceServer) ClearRate(context.Context, *ClearRateRequest) (*ClearRateResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method ClearRate not implemented")
+}
+func (UnimplementedAntiBruteforceServer) AddToBlacklist(context.Context, *IPListRequest) (*IPListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddToBlacklist not implemented")
+}
+func (UnimplementedAntiBruteforceServer) RemoveFromBlacklist(context.Context, *IPListRequest) (*IPListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RemoveFromBlacklist not implemented")
+}
+func (UnimplementedAntiBruteforceServer) AddToWhitelist(context.Context, *IPListRequest) (*IPListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method AddToWhitelist not implemented")
+}
+func (UnimplementedAntiBruteforceServer) RemoveFromWhitelist(context.Context, *IPListRequest) (*IPListResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method RemoveFromWhitelist not implemented")
 }
 func (UnimplementedAntiBruteforceServer) mustEmbedUnimplementedAntiBruteforceServer() {}
 func (UnimplementedAntiBruteforceServer) testEmbeddedByValue()                        {}
@@ -206,6 +270,78 @@ func _AntiBruteforce_ClearRate_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AntiBruteforce_AddToBlacklist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IPListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AntiBruteforceServer).AddToBlacklist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AntiBruteforce_AddToBlacklist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AntiBruteforceServer).AddToBlacklist(ctx, req.(*IPListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AntiBruteforce_RemoveFromBlacklist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IPListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AntiBruteforceServer).RemoveFromBlacklist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AntiBruteforce_RemoveFromBlacklist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AntiBruteforceServer).RemoveFromBlacklist(ctx, req.(*IPListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AntiBruteforce_AddToWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IPListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AntiBruteforceServer).AddToWhitelist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AntiBruteforce_AddToWhitelist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AntiBruteforceServer).AddToWhitelist(ctx, req.(*IPListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AntiBruteforce_RemoveFromWhitelist_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(IPListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AntiBruteforceServer).RemoveFromWhitelist(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AntiBruteforce_RemoveFromWhitelist_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AntiBruteforceServer).RemoveFromWhitelist(ctx, req.(*IPListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AntiBruteforce_ServiceDesc is the grpc.ServiceDesc for AntiBruteforce service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -228,6 +364,22 @@ var AntiBruteforce_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ClearRate",
 			Handler:    _AntiBruteforce_ClearRate_Handler,
+		},
+		{
+			MethodName: "AddToBlacklist",
+			Handler:    _AntiBruteforce_AddToBlacklist_Handler,
+		},
+		{
+			MethodName: "RemoveFromBlacklist",
+			Handler:    _AntiBruteforce_RemoveFromBlacklist_Handler,
+		},
+		{
+			MethodName: "AddToWhitelist",
+			Handler:    _AntiBruteforce_AddToWhitelist_Handler,
+		},
+		{
+			MethodName: "RemoveFromWhitelist",
+			Handler:    _AntiBruteforce_RemoveFromWhitelist_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -48,6 +48,68 @@
         ]
       }
     },
+    "/blacklist": {
+      "delete": {
+        "operationId": "AntiBruteforce_RemoveFromBlacklist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventIPListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/eventIPListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AntiBruteforce"
+        ]
+      },
+      "post": {
+        "operationId": "AntiBruteforce_AddToBlacklist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventIPListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/eventIPListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AntiBruteforce"
+        ]
+      }
+    },
     "/clear-rate": {
       "post": {
         "operationId": "AntiBruteforce_ClearRate",
@@ -123,6 +185,68 @@
           "AntiBruteforce"
         ]
       }
+    },
+    "/whitelist": {
+      "delete": {
+        "operationId": "AntiBruteforce_RemoveFromWhitelist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventIPListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/eventIPListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AntiBruteforce"
+        ]
+      },
+      "post": {
+        "operationId": "AntiBruteforce_AddToWhitelist",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/eventIPListResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/eventIPListRequest"
+            }
+          }
+        ],
+        "tags": [
+          "AntiBruteforce"
+        ]
+      }
     }
   },
   "definitions": {
@@ -177,6 +301,17 @@
           "type": "string"
         }
       }
+    },
+    "eventIPListRequest": {
+      "type": "object",
+      "properties": {
+        "subnet": {
+          "type": "string"
+        }
+      }
+    },
+    "eventIPListResponse": {
+      "type": "object"
     },
     "protobufAny": {
       "type": "object",

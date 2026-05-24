@@ -374,6 +374,86 @@ func (*ClearRateResponse) Descriptor() ([]byte, []int) {
 	return file_AntiBruteforce_proto_rawDescGZIP(), []int{7}
 }
 
+type IPListRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Subnet        string                 `protobuf:"bytes,1,opt,name=subnet,proto3" json:"subnet,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IPListRequest) Reset() {
+	*x = IPListRequest{}
+	mi := &file_AntiBruteforce_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IPListRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IPListRequest) ProtoMessage() {}
+
+func (x *IPListRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_AntiBruteforce_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IPListRequest.ProtoReflect.Descriptor instead.
+func (*IPListRequest) Descriptor() ([]byte, []int) {
+	return file_AntiBruteforce_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *IPListRequest) GetSubnet() string {
+	if x != nil {
+		return x.Subnet
+	}
+	return ""
+}
+
+type IPListResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *IPListResponse) Reset() {
+	*x = IPListResponse{}
+	mi := &file_AntiBruteforce_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *IPListResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*IPListResponse) ProtoMessage() {}
+
+func (x *IPListResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_AntiBruteforce_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use IPListResponse.ProtoReflect.Descriptor instead.
+func (*IPListResponse) Descriptor() ([]byte, []int) {
+	return file_AntiBruteforce_proto_rawDescGZIP(), []int{9}
+}
+
 var File_AntiBruteforce_proto protoreflect.FileDescriptor
 
 const file_AntiBruteforce_proto_rawDesc = "" +
@@ -394,12 +474,23 @@ const file_AntiBruteforce_proto_rawDesc = "" +
 	"\x10ClearRateRequest\x12\x14\n" +
 	"\x05login\x18\x01 \x01(\tR\x05login\x12\x0e\n" +
 	"\x02ip\x18\x02 \x01(\tR\x02ip\"\x13\n" +
-	"\x11ClearRateResponse2\xe6\x02\n" +
+	"\x11ClearRateResponse\"'\n" +
+	"\rIPListRequest\x12\x16\n" +
+	"\x06subnet\x18\x01 \x01(\tR\x06subnet\"\x10\n" +
+	"\x0eIPListResponse2\xc8\x05\n" +
 	"\x0eAntiBruteforce\x12H\n" +
 	"\x05Hello\x12\x13.event.HelloRequest\x1a\x14.event.HelloResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/hello-world\x12Z\n" +
 	"\vHealthcheck\x12\x19.event.HealthcheckRequest\x1a\x1a.event.HealthcheckResponse\"\x14\x82\xd3\xe4\x93\x02\x0e\x12\f/healthcheck\x12V\n" +
 	"\tCheckAuth\x12\x17.event.CheckAuthRequest\x1a\x18.event.CheckAuthResponse\"\x16\x82\xd3\xe4\x93\x02\x10:\x01*\"\v/auth/check\x12V\n" +
-	"\tClearRate\x12\x17.event.ClearRateRequest\x1a\x18.event.ClearRateResponse\"\x16\x82\xd3\xe4\x93\x02\x10:\x01*\"\v/clear-rateB0Z.github.com/Romasmi/anti-bruteforce/pkg/api;apib\x06proto3"
+	"\tClearRate\x12\x17.event.ClearRateRequest\x1a\x18.event.ClearRateResponse\"\x16\x82\xd3\xe4\x93\x02\x10:\x01*\"\v/clear-rate\x12T\n" +
+	"\x0eAddToBlacklist\x12\x14.event.IPListRequest\x1a\x15.event.IPListResponse\"\x15\x82\xd3\xe4\x93\x02\x0f:\x01*\"\n" +
+	"/blacklist\x12Y\n" +
+	"\x13RemoveFromBlacklist\x12\x14.event.IPListRequest\x1a\x15.event.IPListResponse\"\x15\x82\xd3\xe4\x93\x02\x0f:\x01**\n" +
+	"/blacklist\x12T\n" +
+	"\x0eAddToWhitelist\x12\x14.event.IPListRequest\x1a\x15.event.IPListResponse\"\x15\x82\xd3\xe4\x93\x02\x0f:\x01*\"\n" +
+	"/whitelist\x12Y\n" +
+	"\x13RemoveFromWhitelist\x12\x14.event.IPListRequest\x1a\x15.event.IPListResponse\"\x15\x82\xd3\xe4\x93\x02\x0f:\x01**\n" +
+	"/whitelistB0Z.github.com/Romasmi/anti-bruteforce/pkg/api;apib\x06proto3"
 
 var (
 	file_AntiBruteforce_proto_rawDescOnce sync.Once
@@ -413,7 +504,7 @@ func file_AntiBruteforce_proto_rawDescGZIP() []byte {
 	return file_AntiBruteforce_proto_rawDescData
 }
 
-var file_AntiBruteforce_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_AntiBruteforce_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_AntiBruteforce_proto_goTypes = []any{
 	(*HelloRequest)(nil),        // 0: event.HelloRequest
 	(*HelloResponse)(nil),       // 1: event.HelloResponse
@@ -423,18 +514,28 @@ var file_AntiBruteforce_proto_goTypes = []any{
 	(*CheckAuthResponse)(nil),   // 5: event.CheckAuthResponse
 	(*ClearRateRequest)(nil),    // 6: event.ClearRateRequest
 	(*ClearRateResponse)(nil),   // 7: event.ClearRateResponse
+	(*IPListRequest)(nil),       // 8: event.IPListRequest
+	(*IPListResponse)(nil),      // 9: event.IPListResponse
 }
 var file_AntiBruteforce_proto_depIdxs = []int32{
 	0, // 0: event.AntiBruteforce.Hello:input_type -> event.HelloRequest
 	2, // 1: event.AntiBruteforce.Healthcheck:input_type -> event.HealthcheckRequest
 	4, // 2: event.AntiBruteforce.CheckAuth:input_type -> event.CheckAuthRequest
 	6, // 3: event.AntiBruteforce.ClearRate:input_type -> event.ClearRateRequest
-	1, // 4: event.AntiBruteforce.Hello:output_type -> event.HelloResponse
-	3, // 5: event.AntiBruteforce.Healthcheck:output_type -> event.HealthcheckResponse
-	5, // 6: event.AntiBruteforce.CheckAuth:output_type -> event.CheckAuthResponse
-	7, // 7: event.AntiBruteforce.ClearRate:output_type -> event.ClearRateResponse
-	4, // [4:8] is the sub-list for method output_type
-	0, // [0:4] is the sub-list for method input_type
+	8, // 4: event.AntiBruteforce.AddToBlacklist:input_type -> event.IPListRequest
+	8, // 5: event.AntiBruteforce.RemoveFromBlacklist:input_type -> event.IPListRequest
+	8, // 6: event.AntiBruteforce.AddToWhitelist:input_type -> event.IPListRequest
+	8, // 7: event.AntiBruteforce.RemoveFromWhitelist:input_type -> event.IPListRequest
+	1, // 8: event.AntiBruteforce.Hello:output_type -> event.HelloResponse
+	3, // 9: event.AntiBruteforce.Healthcheck:output_type -> event.HealthcheckResponse
+	5, // 10: event.AntiBruteforce.CheckAuth:output_type -> event.CheckAuthResponse
+	7, // 11: event.AntiBruteforce.ClearRate:output_type -> event.ClearRateResponse
+	9, // 12: event.AntiBruteforce.AddToBlacklist:output_type -> event.IPListResponse
+	9, // 13: event.AntiBruteforce.RemoveFromBlacklist:output_type -> event.IPListResponse
+	9, // 14: event.AntiBruteforce.AddToWhitelist:output_type -> event.IPListResponse
+	9, // 15: event.AntiBruteforce.RemoveFromWhitelist:output_type -> event.IPListResponse
+	8, // [8:16] is the sub-list for method output_type
+	0, // [0:8] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -451,7 +552,7 @@ func file_AntiBruteforce_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_AntiBruteforce_proto_rawDesc), len(file_AntiBruteforce_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

@@ -35,6 +35,12 @@ message ClearRateRequest {
 
 message ClearRateResponse {}
 
+message IPListRequest {
+    string subnet = 1;
+}
+
+message IPListResponse {}
+
 service AntiBruteforce {
     rpc Hello(HelloRequest) returns (HelloResponse) {
         option (google.api.http) = {
@@ -58,6 +64,34 @@ service AntiBruteforce {
     rpc ClearRate(ClearRateRequest) returns (ClearRateResponse) {
         option (google.api.http) = {
             post: "/clear-rate"
+            body: "*"
+        };
+    }
+
+    rpc AddToBlacklist(IPListRequest) returns (IPListResponse) {
+        option (google.api.http) = {
+            post: "/blacklist"
+            body: "*"
+        };
+    }
+
+    rpc RemoveFromBlacklist(IPListRequest) returns (IPListResponse) {
+        option (google.api.http) = {
+            delete: "/blacklist"
+            body: "*"
+        };
+    }
+
+    rpc AddToWhitelist(IPListRequest) returns (IPListResponse) {
+        option (google.api.http) = {
+            post: "/whitelist"
+            body: "*"
+        };
+    }
+
+    rpc RemoveFromWhitelist(IPListRequest) returns (IPListResponse) {
+        option (google.api.http) = {
+            delete: "/whitelist"
             body: "*"
         };
     }
