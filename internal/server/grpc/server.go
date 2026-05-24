@@ -82,6 +82,26 @@ func (s *Server) ClearRate(ctx context.Context, req *api.ClearRateRequest) (*api
 	return &api.ClearRateResponse{}, nil
 }
 
+func (s *Server) AddToBlacklist(ctx context.Context, req *api.IPListRequest) (*api.IPListResponse, error) {
+	_, err := s.usecases[usecases.AddToBlacklist].Do(ctx, &usecases.IPListInput{Subnet: req.Subnet})
+	return &api.IPListResponse{}, err
+}
+
+func (s *Server) RemoveFromBlacklist(ctx context.Context, req *api.IPListRequest) (*api.IPListResponse, error) {
+	_, err := s.usecases[usecases.RemoveFromBlacklist].Do(ctx, &usecases.IPListInput{Subnet: req.Subnet})
+	return &api.IPListResponse{}, err
+}
+
+func (s *Server) AddToWhitelist(ctx context.Context, req *api.IPListRequest) (*api.IPListResponse, error) {
+	_, err := s.usecases[usecases.AddToWhitelist].Do(ctx, &usecases.IPListInput{Subnet: req.Subnet})
+	return &api.IPListResponse{}, err
+}
+
+func (s *Server) RemoveFromWhitelist(ctx context.Context, req *api.IPListRequest) (*api.IPListResponse, error) {
+	_, err := s.usecases[usecases.RemoveFromWhitelist].Do(ctx, &usecases.IPListInput{Subnet: req.Subnet})
+	return &api.IPListResponse{}, err
+}
+
 func (s *Server) loggingInterceptor(
 	ctx context.Context,
 	req any,

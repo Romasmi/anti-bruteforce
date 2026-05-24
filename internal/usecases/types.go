@@ -7,6 +7,10 @@ const (
 	Hello
 	CheckAuth
 	ClearRate
+	AddToBlacklist
+	RemoveFromBlacklist
+	AddToWhitelist
+	RemoveFromWhitelist
 )
 
 const (
@@ -32,4 +36,8 @@ type ClearRateInput struct {
 
 func (r *ClearRateInput) validate() error {
 	return validateClearRate(r.Login, r.IP)
+}
+
+type IPListInput struct {
+	Subnet string
 }

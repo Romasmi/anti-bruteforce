@@ -40,3 +40,13 @@ func validateClearRate(login, ipStr string) error {
 
 	return nil
 }
+
+func validateSubnet(subnet string) error {
+	if subnet == "" {
+		return status.Error(codes.InvalidArgument, "subnet is required")
+	}
+	if _, _, err := net.ParseCIDR(subnet); err != nil {
+		return status.Error(codes.InvalidArgument, "subnet must be a valid CIDR (e.g. 192.168.1.0/24)")
+	}
+	return nil
+}
