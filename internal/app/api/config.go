@@ -13,6 +13,13 @@ type Config struct {
 	GRPC        GRPCConf        `yaml:"grpc"`
 	RateLimiter RateLimiterConf `yaml:"rate_limiter"`
 	DB          DBConf          `yaml:"db"`
+	Redis       RedisConf       `yaml:"redis"`
+}
+
+// RedisConf configures the optional Redis connection used for persistent rate-limit buckets.
+// When Addr is empty the app falls back to in-memory buckets.
+type RedisConf struct {
+	Addr string `yaml:"addr"`
 }
 
 type DBConf struct {

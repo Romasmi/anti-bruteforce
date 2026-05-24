@@ -15,15 +15,17 @@ import (
 	"github.com/Romasmi/anti-bruteforce/pkg/ratelimiter"
 	leakybucket "github.com/Romasmi/anti-bruteforce/pkg/ratelimiter/algorithms/leackybucket"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/redis/go-redis/v9"
 )
 
 type App struct {
-	config     Config
-	logger     *logger.Logger
-	db         *sql.DB
-	grpcServer *grpcserver.Server
-	httpServer *internalhttp.Server
-	IPRepo     *iplist.IPRepo
+	config      Config
+	logger      *logger.Logger
+	db          *sql.DB
+	redisClient *redis.Client
+	grpcServer  *grpcserver.Server
+	httpServer  *internalhttp.Server
+	IPRepo      *iplist.IPRepo
 }
 
 func New(conf Config, l *logger.Logger) *App {
@@ -33,7 +35,7 @@ func New(conf Config, l *logger.Logger) *App {
 	}
 }
 
-func (a *App) Init(_ context.Context) error {
+func (a *App) Init(ctx context.Context) error {
 	database, err := openDB(a.config.DB.DSN)
 	if err != nil {
 		return fmt.Errorf("open db: %w", err)
@@ -44,9 +46,21 @@ func (a *App) Init(_ context.Context) error {
 		return fmt.Errorf("migrate: %w", err)
 	}
 
+	if a.config.Redis.Addr != "" {
+		rc := redis.NewClient(&redis.Options{Addr: a.config.Redis.Addr})
+		if err := rc.Ping(ctx).Err(); err != nil {
+			_ = rc.Close()
+			return fmt.Errorf("ping redis: %w", err)
+		}
+		a.redisClient = rc
+		a.logger.Info("using Redis-backed rate-limit buckets")
+	} else {
+		a.logger.Info("no Redis configured — using in-memory rate-limit buckets")
+	}
+
 	a.IPRepo = iplist.NewIPRepo(a.db)
-	limiter := buildRateLimiter(a.config.RateLimiter, a.IPRepo)
-	ucs := usecases.NewUsecases(a.logger, limiter)
+	limiter := buildRateLimiter(a.config.RateLimiter, a.IPRepo, a.redisClient)
+	ucs := usecases.NewUsecases(a.logger, limiter, a.IPRepo)
 
 	a.grpcServer = grpcserver.NewServer(a.logger, ucs)
 	grpcAddr := fmt.Sprintf("%s:%s", a.config.GRPC.Host, a.config.GRPC.Port)
@@ -91,6 +105,12 @@ func (a *App) Run(ctx context.Context) error {
 		a.logger.Error("failed to close db: " + err.Error())
 	}
 
+	if a.redisClient != nil {
+		if err := a.redisClient.Close(); err != nil {
+			a.logger.Error("failed to close redis: " + err.Error())
+		}
+	}
+
 	return nil
 }
 
@@ -108,15 +128,37 @@ func openDB(dsn string) (*sql.DB, error) {
 	return database, nil
 }
 
-func buildRateLimiter(conf RateLimiterConf, ipRepo leakybucket.Repository) ratelimiter.RateLimiter {
+func buildRateLimiter(conf RateLimiterConf, ipRepo leakybucket.Repository, rc *redis.Client) ratelimiter.RateLimiter {
+	ttl := func(c BucketConf) time.Duration {
+		return 2 * time.Duration(c.WindowSeconds) * time.Second
+	}
+	leakRate := func(c BucketConf) float64 { return c.Capacity / c.WindowSeconds }
+
+	if rc != nil {
+		return ratelimiter.NewRateLimiter(ratelimiter.AlgorithmMap{
+			usecases.StrategyLogin: leakybucket.NewPersistentLeakyBucket(leakybucket.PersistentLeakyBucketParams{
+				Client: rc, Prefix: usecases.StrategyLogin,
+				Capacity: conf.Login.Capacity, LeakRate: leakRate(conf.Login), TTL: ttl(conf.Login),
+			}),
+			usecases.StrategyPassword: leakybucket.NewPersistentLeakyBucket(leakybucket.PersistentLeakyBucketParams{
+				Client: rc, Prefix: usecases.StrategyPassword,
+				Capacity: conf.Password.Capacity, LeakRate: leakRate(conf.Password), TTL: ttl(conf.Password),
+			}),
+			usecases.StrategyIP: leakybucket.NewPersistentLeakyBucket(leakybucket.PersistentLeakyBucketParams{
+				Client: rc, Prefix: usecases.StrategyIP, Repo: ipRepo,
+				Capacity: conf.IP.Capacity, LeakRate: leakRate(conf.IP), TTL: ttl(conf.IP),
+			}),
+		})
+	}
+
 	return ratelimiter.NewRateLimiter(ratelimiter.AlgorithmMap{
-		usecases.StrategyLogin:    newBucket(conf.Login, nil),
-		usecases.StrategyPassword: newBucket(conf.Password, nil),
-		usecases.StrategyIP:       newBucket(conf.IP, ipRepo),
+		usecases.StrategyLogin:    newInMemoryBucket(conf.Login, nil),
+		usecases.StrategyPassword: newInMemoryBucket(conf.Password, nil),
+		usecases.StrategyIP:       newInMemoryBucket(conf.IP, ipRepo),
 	})
 }
 
-func newBucket(conf BucketConf, repo leakybucket.Repository) *leakybucket.LeakyBucket {
+func newInMemoryBucket(conf BucketConf, repo leakybucket.Repository) *leakybucket.LeakyBucket {
 	return leakybucket.NewLeakyBucket(leakybucket.LeakyBucketParams{
 		Capacity: conf.Capacity,
 		LeakRate: conf.Capacity / conf.WindowSeconds,

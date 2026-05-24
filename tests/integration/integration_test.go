@@ -226,3 +226,84 @@ func TestClearRate_IP(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, resp.Ok, "should be allowed again after IP bucket reset")
 }
+
+// TestBlacklist_Validation ensures the API rejects invalid inputs.
+func TestBlacklist_Validation(t *testing.T) {
+	t.Parallel()
+
+	t.Run("empty subnet", func(t *testing.T) {
+		t.Parallel()
+		_, err := client.AddToBlacklist(t.Context(), &api.IPListRequest{Subnet: ""})
+		requireInvalidArgument(t, err)
+	})
+
+	t.Run("invalid cidr", func(t *testing.T) {
+		t.Parallel()
+		_, err := client.AddToBlacklist(t.Context(), &api.IPListRequest{Subnet: "not-a-cidr"})
+		requireInvalidArgument(t, err)
+	})
+}
+
+// TestWhitelist_Validation ensures the API rejects invalid inputs.
+func TestWhitelist_Validation(t *testing.T) {
+	t.Parallel()
+
+	t.Run("empty subnet", func(t *testing.T) {
+		t.Parallel()
+		_, err := client.AddToWhitelist(t.Context(), &api.IPListRequest{Subnet: ""})
+		requireInvalidArgument(t, err)
+	})
+
+	t.Run("invalid cidr", func(t *testing.T) {
+		t.Parallel()
+		_, err := client.AddToWhitelist(t.Context(), &api.IPListRequest{Subnet: "not-a-cidr"})
+		requireInvalidArgument(t, err)
+	})
+}
+
+// TestBlacklist_BlocksAndUnblocks adds an IP to the blacklist, verifies auth is denied,
+// removes it, and verifies auth is allowed again.
+func TestBlacklist_BlocksAndUnblocks(t *testing.T) {
+	t.Parallel()
+	ip := uniqueIP()
+	subnet := ip + "/32"
+
+	_, err := client.AddToBlacklist(t.Context(), &api.IPListRequest{Subnet: subnet})
+	require.NoError(t, err)
+
+	resp, err := client.CheckAuth(t.Context(), &api.CheckAuthRequest{
+		Login: "bl_" + nextID(), Password: "pass", Ip: ip,
+	})
+	require.NoError(t, err)
+	require.False(t, resp.Ok, "blacklisted IP should be denied")
+
+	_, err = client.RemoveFromBlacklist(t.Context(), &api.IPListRequest{Subnet: subnet})
+	require.NoError(t, err)
+
+	resp, err = client.CheckAuth(t.Context(), &api.CheckAuthRequest{
+		Login: "bl_" + nextID(), Password: "pass", Ip: ip,
+	})
+	require.NoError(t, err)
+	require.True(t, resp.Ok, "IP should be allowed after blacklist removal")
+}
+
+// TestWhitelist_BypassesRateLimit adds an IP to the whitelist and verifies it is always
+// allowed even after the per-IP bucket is exhausted.
+func TestWhitelist_BypassesRateLimit(t *testing.T) {
+	t.Parallel()
+	ip := uniqueIP()
+	subnet := ip + "/32"
+
+	_, err := client.AddToWhitelist(t.Context(), &api.IPListRequest{Subnet: subnet})
+	require.NoError(t, err)
+	defer client.RemoveFromWhitelist(t.Context(), &api.IPListRequest{Subnet: subnet}) //nolint:errcheck
+
+	// Send far more requests than the IP capacity (10 in integration config).
+	for i := range 20 {
+		resp, err := client.CheckAuth(t.Context(), &api.CheckAuthRequest{
+			Login: fmt.Sprintf("wl_%s_%d", nextID(), i), Password: "pass", Ip: ip,
+		})
+		require.NoError(t, err)
+		require.True(t, resp.Ok, "whitelisted IP should always be allowed (request %d)", i+1)
+	}
+}

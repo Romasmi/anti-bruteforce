@@ -21,8 +21,27 @@ func init() {
 func main() {
 	flag.Parse()
 
-	if flag.Arg(0) == "version" {
+	switch flag.Arg(0) {
+	case "version":
 		printVersion()
+		return
+	case "clear":
+		if err := runClear(flag.Args()[1:]); err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			os.Exit(1)
+		}
+		return
+	case "blacklist":
+		if err := runBlacklist(flag.Args()[1:]); err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			os.Exit(1)
+		}
+		return
+	case "whitelist":
+		if err := runWhitelist(flag.Args()[1:]); err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			os.Exit(1)
+		}
 		return
 	}
 
