@@ -2,6 +2,8 @@
 
 A microservice that acts as anti-bruteforce middleware in an API gateway. It rate-limits login attempts by login, password, and IP using a leaky bucket algorithm, and supports IP whitelisting/blacklisting.
 
+See [docs/rate-limiting-flow.md](docs/rate-limiting-flow.md) for a sequence diagram of how a request is processed.
+
 ## Quick start
 
 ```bash
