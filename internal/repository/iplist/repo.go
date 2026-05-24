@@ -64,7 +64,7 @@ func (r *IPRepo) ExistsInBlackList(ip string) bool {
 func (r *IPRepo) existsIn(table, ip string) bool {
 	var exists bool
 	err := r.db.QueryRow(
-		`SELECT EXISTS(SELECT 1 FROM `+table+` WHERE network >> $1::inet)`,
+		`SELECT EXISTS(SELECT 1 FROM `+table+` WHERE network >>= $1::inet)`,
 		ip,
 	).Scan(&exists)
 	return err == nil && exists

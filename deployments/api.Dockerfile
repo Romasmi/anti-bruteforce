@@ -22,4 +22,4 @@ COPY --from=builder --chown=appuser:appgroup /app/configs/config.integration.yam
 USER appuser
 
 EXPOSE 8080 50051
-CMD ["./anti-bruteforce", "-config", "configs/config.yaml"]
+CMD ["./anti-bruteforce", "--config", "configs/config.yaml"]

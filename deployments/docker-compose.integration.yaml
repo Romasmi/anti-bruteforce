@@ -28,7 +28,7 @@ services:
     environment:
       - POSTGRES_HOST=postgres-test
       - REDIS_ADDR=redis-test:6379
-    command: ["./anti-bruteforce", "-config", "configs/config.integration.yaml"]
+    command: ["./anti-bruteforce", "--config", "configs/config.integration.yaml"]
     depends_on:
       postgres-test:
         condition: service_healthy

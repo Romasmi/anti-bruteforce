@@ -26,7 +26,7 @@ build:
 	go build -v -o $(BIN) -ldflags "$(LDFLAGS)" ./cmd/anti-bruteforce
 
 run: build
-	$(BIN) -config ./configs/config.yaml
+	$(BIN) --config ./configs/config.yaml
 
 build-img:
 	docker build \
