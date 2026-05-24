@@ -41,7 +41,15 @@ version: build
 	$(BIN) version
 
 test:
-	go test -v -race ./internal/...
+	go test -v -race ./internal/... ./pkg/...
+
+
+integration-tests:
+	docker compose -f deployments/docker-compose.integration.yaml up --build --exit-code-from integration-tests; \
+	RET=$$?; \
+	docker compose -f deployments/docker-compose.integration.yaml down; \
+	exit $$RET
+
 
 lint:
 	go mod download
@@ -56,8 +64,8 @@ generate:
 		--proto_path=internal/proto \
 		--go_out=pkg/api --go_opt=paths=source_relative \
 		--go-grpc_out=pkg/api --go-grpc_opt=paths=source_relative \
-		--grpc-gateway_out=pkg/api --grpc-gateway_opt=paths=source_relative \
-		--openapiv2_out=pkg/api --openapiv2_opt=logtostderr=true \
+		--grpc-gateway_out=pkg/api --grpc-gateway_opt=paths=source_relative,allow_delete_body=true \
+		--openapiv2_out=pkg/api --openapiv2_opt=logtostderr=true,allow_delete_body=true \
 		api/AntiBruteforce.proto
 
 puml:
@@ -65,12 +73,6 @@ puml:
 
 #load-tests:
 #	k6 run load_tests/<add test later>
-
-integration-tests:
-	docker compose -f deployments/docker-compose.integration.yaml up --build --exit-code-from integration-tests; \
-	RET=$$?; \
-	docker compose -f deployments/docker-compose.integration.yaml down; \
-	exit $$RET
 
 clean:
 	rm -rf bin/

@@ -18,3 +18,5 @@ rate_limiter:
   ip:
     capacity: 10
     window_seconds: 60
+redis:
+  addr: "${REDIS_ADDR}"
