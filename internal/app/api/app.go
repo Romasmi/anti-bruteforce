@@ -14,7 +14,7 @@ import (
 	"github.com/Romasmi/anti-bruteforce/migrations"
 	"github.com/Romasmi/anti-bruteforce/pkg/ratelimiter"
 	leakybucket "github.com/Romasmi/anti-bruteforce/pkg/ratelimiter/algorithms/leackybucket"
-	_ "github.com/jackc/pgx/v5/stdlib"
+	_ "github.com/jackc/pgx/v5/stdlib" // register pgx driver for database/sql
 	"github.com/redis/go-redis/v9"
 )
 

@@ -18,7 +18,7 @@ func newVersionCmd() *cobra.Command {
 		Use:          "version",
 		Short:        "Print version info",
 		SilenceUsage: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return json.NewEncoder(os.Stdout).Encode(struct {
 				Release   string
 				BuildDate string

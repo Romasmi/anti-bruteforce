@@ -9,7 +9,7 @@ func NewRootCmd(serve func(configFile string) error) *cobra.Command {
 		Use:          "anti-bruteforce",
 		Short:        "Anti-bruteforce rate limiter service",
 		SilenceUsage: true,
-		RunE: func(cmd *cobra.Command, args []string) error {
+		RunE: func(_ *cobra.Command, _ []string) error {
 			return serve(configFile)
 		},
 	}

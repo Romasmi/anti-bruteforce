@@ -52,8 +52,9 @@ func TestMain(m *testing.M) {
 	client = api.NewAntiBruteforceClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
-	defer cancel()
-	if err := waitReady(ctx); err != nil {
+	err = waitReady(ctx)
+	cancel()
+	if err != nil {
 		fmt.Fprintln(os.Stderr, "service not ready:", err)
 		_ = conn.Close()
 		os.Exit(1)
@@ -136,7 +137,8 @@ func TestCheckAuth_Allowed(t *testing.T) {
 	require.True(t, resp.Ok)
 }
 
-// TestCheckAuth_LoginRateLimit exhausts the login bucket (capacity=3 in the integration config) and verifies the next request is denied.
+// TestCheckAuth_LoginRateLimit exhausts the login bucket (capacity=3 in the integration config)
+// and verifies the next request is denied.
 func TestCheckAuth_LoginRateLimit(t *testing.T) {
 	t.Parallel()
 	login := "lrl_" + nextID()
