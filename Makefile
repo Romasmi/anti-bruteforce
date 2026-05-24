@@ -7,7 +7,7 @@ BIN := "./bin/anti-bruteforce"
 DOCKER_IMG="anti-bruteforce:develop"
 
 GIT_HASH := $(shell git log --format="%h" -n 1)
-LDFLAGS := -X 'main.release=develop' -X 'main.buildDate=$(shell date -u +%Y-%m-%dT%H:%M:%S)' -X 'main.gitHash=$(GIT_HASH)'
+LDFLAGS := -X 'github.com/Romasmi/anti-bruteforce/internal/cli.release=develop' -X 'github.com/Romasmi/anti-bruteforce/internal/cli.buildDate=$(shell date -u +%Y-%m-%dT%H:%M:%S)' -X 'github.com/Romasmi/anti-bruteforce/internal/cli.gitHash=$(GIT_HASH)'
 
 #Postrges
 POSTGRES_USER ?= postgres
