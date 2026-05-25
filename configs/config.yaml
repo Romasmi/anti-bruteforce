@@ -1,0 +1,22 @@
+logger:
+  level: "${LOGGER_LEVEL}"
+http:
+  host: "${ANTI_BRUTEFORCE_HTTP_HOST}"
+  port: "${ANTI_BRUTEFORCE_HTTP_PORT}"
+grpc:
+  host: "${ANTI_BRUTEFORCE_GRPC_HOST}"
+  port: "${ANTI_BRUTEFORCE_GRPC_PORT}"
+db:
+  dsn: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${POSTGRES_HOST}:${POSTGRES_PORT}/${POSTGRES_DB}?sslmode=disable"
+rate_limiter:
+  login:
+    capacity: 10
+    window_seconds: 60
+  password:
+    capacity: 100
+    window_seconds: 60
+  ip:
+    capacity: 1000
+    window_seconds: 60
+redis:
+  addr: "${REDIS_ADDR}"

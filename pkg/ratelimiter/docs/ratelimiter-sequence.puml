@@ -1,0 +1,91 @@
+@startuml ratelimiter-sequence
+
+skinparam shadowing false
+skinparam sequenceArrowThickness 1.5
+skinparam sequenceParticipant underline
+
+actor       Caller      as C
+participant RateLimiter as RL
+participant "LoginBucket\n(LeakyBucket)" as LB
+participant "PasswordBucket\n(LeakyBucket)" as PB
+participant "IPBucket\n(LeakyBucket)"  as IB
+participant Repository  as Repo
+
+== Setup (once at startup) ==
+
+C -> RL : NewRateLimiter(AlgorithmMap{\n  "login"    → LoginBucket,\n  "password" → PasswordBucket,\n  "ip"       → IPBucket,\n})
+
+== Allow request ==
+
+C -> RL : Allow(StrategyMap{\n  "login"    → "userA",\n  "password" → "secretpass",\n  "ip"       → "127.0.0.1",\n})
+
+RL -> RL : validate all strategies are registered
+
+note over RL : Fan-out: each strategy runs\nin its own goroutine (errgroup)
+
+par concurrent goroutines
+
+    RL ->> LB : Allow("userA")
+
+    group optional — only when Repo != nil
+        LB -> Repo : ExistsInWhiteList("userA")
+        Repo --> LB : false
+        LB -> Repo : ExistsInBlackList("userA")
+        Repo --> LB : false
+    end
+
+    LB -> LB : leak elapsed tokens
+    LB -> LB : level(1) ≤ capacity(10) → allow
+    LB --> RL : true
+
+    RL ->> PB : Allow("secretpass")
+
+    group optional — only when Repo != nil
+        PB -> Repo : ExistsInWhiteList("secretpass")
+        Repo --> PB : false
+        PB -> Repo : ExistsInBlackList("secretpass")
+        Repo --> PB : false
+    end
+
+    PB -> PB : leak elapsed tokens
+    PB -> PB : level(50) ≤ capacity(100) → allow
+    PB --> RL : true
+
+    RL ->> IB : Allow("127.0.0.1")
+
+    group optional — only when Repo != nil
+        IB -> Repo : ExistsInWhiteList("127.0.0.1")
+        Repo --> IB : false
+        IB -> Repo : ExistsInBlackList("127.0.0.1")
+        Repo --> IB : false
+    end
+
+    IB -> IB : leak elapsed tokens
+    IB -> IB : level(1001) > capacity(1000) → deny
+    IB --> RL : false
+
+end
+
+RL -> RL : aggregate: any false → denied
+
+RL --> C : false, nil
+
+== Whitelist fast-path ==
+
+C -> RL : Allow(StrategyMap{\n  "ip" → "10.0.0.1",\n})
+RL ->> IB : Allow("10.0.0.1")
+
+group Repo != nil
+    IB -> Repo : ExistsInWhiteList("10.0.0.1")
+    Repo --> IB : **true**
+end
+
+IB --> RL : true   (bucket never touched)
+RL --> C : true, nil
+
+== Reset ==
+
+C -> RL : (direct) IPBucket.Reset("127.0.0.1")
+IB -> IB : delete bucket["127.0.0.1"]
+
+@enduml
